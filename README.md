@@ -1,10 +1,9 @@
-# Compiler
+## Tiny C Compiler
 
-# Requirements:
-<br>
+### Requirements:
 Uses tools flex and bison.
 
-# **TO INSTALL TOOLS:**
+### **TO INSTALL TOOLS:**
 
 ```
 sudo apt-get install update
@@ -12,12 +11,13 @@ sudo apt-get install flex
 sudo apt-get install bison
 ```
 
-# **TO BUILD:**
-
+### **TO BUILD:**
+```
 make
+```
 
-# **TO RUN TESTCASES:**
-
+### **TO RUN TESTCASES:**
+```
 make test1
-<br>
 ./test1
+```
