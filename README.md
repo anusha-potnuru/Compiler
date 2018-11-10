@@ -6,7 +6,7 @@ Uses tools flex and bison.
 ### **TO INSTALL TOOLS:**
 
 ```
-sudo apt-get install update
+sudo apt-get update
 sudo apt-get install flex
 sudo apt-get install bison
 ```
