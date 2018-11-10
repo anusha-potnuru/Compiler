@@ -1,0 +1,172 @@
+========================================================================================================================
+Symbol Table: Global                                                             Parent: null
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+printInt            int                                        function       4            0            ptr-to-ST(printInt)
+printStr            int                                        function       4            4            ptr-to-ST(printStr)
+readInt             int                                        function       4            8            ptr-to-ST(readInt)
+sumofdigits         int                                        function       4            12           ptr-to-ST(sumofdigits)
+main                int                                        function       4            16           ptr-to-ST(main)
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: printInt                                                           Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+n                   int                                        param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: printStr                                                           Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+c                   ptr(char)                                  param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: readInt                                                            Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+eP                  ptr(int)                                   param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: sumofdigits                                                        Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+x                   int                                        param          4            0            null
+return              int                                        local          4            4            null
+k                   int                                        local          4            8            null
+t00                 int                       10               temp           4            12           null
+t01                 int                                        temp           4            16           null
+t02                 int                       0                temp           4            20           null
+t03                 int                                        temp           4            24           null
+t04                 int                                        temp           4            28           null
+sumofdigits         int                                        local          4            32           null
+t05                 int                       10               temp           4            36           null
+t06                 int                                        temp           4            40           null
+t07                 int                                        temp           4            44           null
+t08                 int                       10               temp           4            48           null
+t09                 int                                        temp           4            52           null
+t10                 int                                        temp           4            56           null
+t11                 int                                        temp           4            60           null
+t12                 int                                        temp           4            64           null
+t13                 int                                        temp           4            68           null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: main                                                               Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+return              int                                        local          4            0            null
+n                   int                                        local          4            4            null
+printStr            int                                        local          4            8            null
+t00                 ptr(char)                 "This Programs calculate if a number is a magic number or not.\n"temp           4            12           null
+t01                 int                                        temp           4            16           null
+t02                 ptr(char)                 "ENTER NUMBER\n" temp           4            20           null
+t03                 int                                        temp           4            24           null
+err                 int                                        local          4            28           null
+readInt             int                                        local          4            32           null
+t04                 ptr(int)                                   temp           4            36           null
+t05                 int                                        temp           4            40           null
+t06                 int                                        temp           4            44           null
+t07                 int                                        temp           4            48           null
+t08                 int                       10               temp           4            52           null
+t09                 int                                        temp           4            56           null
+t10                 int                       0                temp           4            60           null
+sumofdigits         int                                        local          4            64           null
+t11                 int                                        temp           4            68           null
+t12                 int                                        temp           4            72           null
+t13                 int                                        temp           4            76           null
+t14                 ptr(char)                 "Sum of digits \n"temp           4            80           null
+t15                 int                                        temp           4            84           null
+printInt            int                                        local          4            88           null
+t16                 int                                        temp           4            92           null
+t17                 ptr(char)                 "\nKeep calculating sum of digits until single digit, If  1, it is magical, else not!! \n"temp           4            96           null
+t18                 int                                        temp           4            100          null
+t19                 int                       1                temp           4            104          null
+t20                 ptr(char)                 "Number is magic\n"temp           4            108          null
+t21                 int                                        temp           4            112          null
+t22                 ptr(char)                 "number is not magic\n"temp           4            116          null
+t23                 int                                        temp           4            120          null
+t24                 int                       0                temp           4            124          null
+========================================================================================================================
+
+===================================
+Quad Translation:
+-----------------------------------
+
+sumofdigits: 
+
+	1   :	t00 = 10
+	2   :	t01 = x / t00
+	3   :	t02 = 0
+	4   :	if t01 == t02 goto 7
+	5   :	goto 9
+	6   :	goto 19
+	7   :	k = x
+	8   :	goto 19
+	9   :	t05 = 10
+	10  :	t06 = x % t05
+	11  :	param t06
+	12  :	t07 = call sumofdigits, 1
+	13  :	t08 = 10
+	14  :	t09 = x / t08
+	15  :	param t09
+	16  :	t10 = call sumofdigits, 1
+	17  :	t11 = t07 + t10
+	18  :	k = t11
+	19  :	ret k
+
+main: 
+
+	22  :	t00 = "This Programs calculate if a number is a magic number or not.\n"
+	23  :	param t00
+	24  :	t01 = call printStr, 1
+	25  :	t02 = "ENTER NUMBER\n"
+	26  :	param t02
+	27  :	t03 = call printStr, 1
+	28  :	t04 = &err
+	29  :	param t04
+	30  :	t05 = call readInt, 1
+	31  :	n = t05
+	32  :	t08 = 10
+	33  :	t09 = n / t08
+	34  :	t10 = 0
+	35  :	if t09 != t10 goto 37
+	36  :	goto 41
+	37  :	param n
+	38  :	t11 = call sumofdigits, 1
+	39  :	n = t11
+	40  :	goto 32
+	41  :	t14 = "Sum of digits \n"
+	42  :	param t14
+	43  :	t15 = call printStr, 1
+	44  :	param n
+	45  :	t16 = call printInt, 1
+	46  :	t17 = "\nKeep calculating sum of digits until single digit, If  1, it is magical, else not!! \n"
+	47  :	param t17
+	48  :	t18 = call printStr, 1
+	49  :	t19 = 1
+	50  :	if n == t19 goto 53
+	51  :	goto 57
+	52  :	goto 60
+	53  :	t20 = "Number is magic\n"
+	54  :	param t20
+	55  :	t21 = call printStr, 1
+	56  :	goto 60
+	57  :	t22 = "number is not magic\n"
+	58  :	param t22
+	59  :	t23 = call printStr, 1
+	60  :	t24 = 0
+	61  :	ret t24
+-----------------------------------

@@ -1,0 +1,6638 @@
+   0  $accept : translation_unit $end
+
+   1  primary_expression : IDENTIFIER
+   2                     | constant
+   3                     | STRING_LITERAL
+   4                     | ROBRAOPEN expression ROBRACLOSE
+
+   5  constant : INTEGER_CONSTANT
+   6           | FLOATING_CONSTANT
+   7           | ENUMERATION_CONSTANT
+   8           | CHARACTER_CONSTANT
+
+   9  postfix_expression : primary_expression
+  10                     | postfix_expression SQBRAOPEN expression SQBRACLOSE
+  11                     | postfix_expression ROBRAOPEN ROBRACLOSE
+  12                     | postfix_expression ROBRAOPEN argument_expression_list ROBRACLOSE
+  13                     | postfix_expression DOT IDENTIFIER
+  14                     | postfix_expression ACC IDENTIFIER
+  15                     | postfix_expression INC
+  16                     | postfix_expression DEC
+  17                     | ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE
+  18                     | ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE
+
+  19  argument_expression_list : assignment_expression
+  20                           | argument_expression_list COMMA assignment_expression
+
+  21  unary_expression : postfix_expression
+  22                   | INC unary_expression
+  23                   | DEC unary_expression
+  24                   | unary_operator cast_expression
+  25                   | SIZEOF unary_expression
+  26                   | SIZEOF ROBRAOPEN type_name ROBRACLOSE
+
+  27  unary_operator : AMP
+  28                 | MUL
+  29                 | ADD
+  30                 | SUB
+  31                 | NEG
+  32                 | EXCLAIM
+
+  33  cast_expression : unary_expression
+  34                  | ROBRAOPEN type_name ROBRACLOSE cast_expression
+
+  35  multiplicative_expression : cast_expression
+  36                            | multiplicative_expression MUL cast_expression
+  37                            | multiplicative_expression DIV cast_expression
+  38                            | multiplicative_expression MODULO cast_expression
+
+  39  additive_expression : multiplicative_expression
+  40                      | additive_expression ADD multiplicative_expression
+  41                      | additive_expression SUB multiplicative_expression
+
+  42  shift_expression : additive_expression
+  43                   | shift_expression SHL additive_expression
+  44                   | shift_expression SHR additive_expression
+
+  45  relational_expression : shift_expression
+  46                        | relational_expression BITSHL shift_expression
+  47                        | relational_expression BITSHR shift_expression
+  48                        | relational_expression LTE shift_expression
+  49                        | relational_expression GTE shift_expression
+
+  50  equality_expression : relational_expression
+  51                      | equality_expression EQ relational_expression
+  52                      | equality_expression NEQ relational_expression
+
+  53  AND_expression : equality_expression
+  54                 | AND_expression AMP equality_expression
+
+  55  exclusive_OR_expression : AND_expression
+  56                          | exclusive_OR_expression BITXOR AND_expression
+
+  57  inclusive_OR_expression : exclusive_OR_expression
+  58                          | inclusive_OR_expression BITOR exclusive_OR_expression
+
+  59  logical_AND_expression : inclusive_OR_expression
+  60                         | logical_AND_expression NLabel AND MLabel inclusive_OR_expression
+
+  61  logical_OR_expression : logical_AND_expression
+  62                        | logical_OR_expression NLabel OR MLabel logical_AND_expression
+
+  63  MLabel :
+
+  64  NLabel :
+
+  65  conditional_expression : logical_OR_expression
+  66                         | logical_OR_expression NLabel QUESTION MLabel expression NLabel COLON MLabel conditional_expression
+
+  67  assignment_expression : conditional_expression
+  68                        | unary_expression assignment_operator assignment_expression
+
+  69  assignment_operator : ASSIGN
+  70                      | STAREQ
+  71                      | DIVEQ
+  72                      | MODEQ
+  73                      | PLUSEQ
+  74                      | MINUSEQ
+  75                      | SHLEQ
+  76                      | SHREQ
+  77                      | BINANDEQ
+  78                      | BINXOREQ
+  79                      | BINOREQ
+
+  80  expression : assignment_expression
+  81             | expression COMMA assignment_expression
+
+  82  constant_expression : conditional_expression
+
+  83  declaration : declaration_specifiers init_declarator_list SEMICOLON
+  84              | declaration_specifiers SEMICOLON
+
+  85  declaration_specifiers : storage_class_specifier declaration_specifiers
+  86                         | storage_class_specifier
+  87                         | type_specifier declaration_specifiers
+  88                         | type_specifier
+  89                         | type_qualifier declaration_specifiers
+  90                         | type_qualifier
+  91                         | function_specifier declaration_specifiers
+  92                         | function_specifier
+
+  93  init_declarator_list : init_declarator
+  94                       | init_declarator_list COMMA init_declarator
+
+  95  init_declarator : declarator
+  96                  | declarator ASSIGN initializer
+
+  97  storage_class_specifier : EXTERN
+  98                          | STATIC
+  99                          | AUTO
+ 100                          | REGISTER
+
+ 101  type_specifier : VOID
+ 102                 | CHAR
+ 103                 | SHORT
+ 104                 | INT
+ 105                 | LONG
+ 106                 | FLOAT
+ 107                 | DOUBLE
+ 108                 | SIGNED
+ 109                 | UNSIGNED
+ 110                 | BOOL
+ 111                 | COMPLEX
+ 112                 | IMAGINARY
+ 113                 | enum_specifier
+
+ 114  specifier_qualifier_list : type_specifier specifier_qualifier_list
+ 115                           | type_specifier
+ 116                           | type_qualifier specifier_qualifier_list
+ 117                           | type_qualifier
+
+ 118  enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list CURBRACLOSE
+ 119                 | ENUM CURBRAOPEN enumerator_list CURBRACLOSE
+ 120                 | ENUM IDENTIFIER CURBRAOPEN enumerator_list COMMA CURBRACLOSE
+ 121                 | ENUM CURBRAOPEN enumerator_list COMMA CURBRACLOSE
+ 122                 | ENUM IDENTIFIER
+
+ 123  enumerator_list : enumerator
+ 124                  | enumerator_list COMMA enumerator
+
+ 125  enumerator : IDENTIFIER
+ 126             | IDENTIFIER ASSIGN constant_expression
+
+ 127  type_qualifier : CONST
+ 128                 | RESTRICT
+ 129                 | VOLATILE
+
+ 130  function_specifier : INLINE
+
+ 131  declarator : pointer direct_declarator
+ 132             | direct_declarator
+
+ 133  direct_declarator : IDENTIFIER
+ 134                    | ROBRAOPEN declarator ROBRACLOSE
+ 135                    | direct_declarator SQBRAOPEN type_qualifier_list assignment_expression SQBRACLOSE
+ 136                    | direct_declarator SQBRAOPEN type_qualifier_list SQBRACLOSE
+ 137                    | direct_declarator SQBRAOPEN assignment_expression SQBRACLOSE
+ 138                    | direct_declarator SQBRAOPEN SQBRACLOSE
+ 139                    | direct_declarator SQBRAOPEN STATIC type_qualifier_list assignment_expression SQBRACLOSE
+ 140                    | direct_declarator SQBRAOPEN STATIC assignment_expression SQBRACLOSE
+ 141                    | direct_declarator SQBRAOPEN type_qualifier_list MUL SQBRACLOSE
+ 142                    | direct_declarator SQBRAOPEN MUL SQBRACLOSE
+ 143                    | direct_declarator ROBRAOPEN CT parameter_type_list ROBRACLOSE
+ 144                    | direct_declarator ROBRAOPEN identifier_list ROBRACLOSE
+ 145                    | direct_declarator ROBRAOPEN CT ROBRACLOSE
+
+ 146  CT :
+
+ 147  pointer : MUL type_qualifier_list
+ 148          | MUL
+ 149          | MUL type_qualifier_list pointer
+ 150          | MUL pointer
+
+ 151  type_qualifier_list : type_qualifier
+ 152                      | type_qualifier_list type_qualifier
+
+ 153  parameter_type_list : parameter_list
+ 154                      | parameter_list COMMA DOTS
+
+ 155  parameter_list : parameter_declaration
+ 156                 | parameter_list COMMA parameter_declaration
+
+ 157  parameter_declaration : declaration_specifiers declarator
+ 158                        | declaration_specifiers
+
+ 159  identifier_list : IDENTIFIER
+ 160                  | identifier_list COMMA IDENTIFIER
+
+ 161  type_name : specifier_qualifier_list
+
+ 162  initializer : assignment_expression
+ 163              | CURBRAOPEN initializer_list CURBRACLOSE
+ 164              | CURBRAOPEN initializer_list COMMA CURBRACLOSE
+
+ 165  initializer_list : designation initializer
+ 166                   | initializer
+ 167                   | initializer_list COMMA designation initializer
+ 168                   | initializer_list COMMA initializer
+
+ 169  designation : designator_list ASSIGN
+
+ 170  designator_list : designator
+ 171                  | designator_list designator
+
+ 172  designator : SQBRAOPEN constant_expression SQBRACLOSE
+ 173             | DOT IDENTIFIER
+
+ 174  statement : labeled_statement
+ 175            | compound_statement
+ 176            | expression_statement
+ 177            | selection_statement
+ 178            | iteration_statement
+ 179            | jump_statement
+
+ 180  labeled_statement : IDENTIFIER COLON statement
+ 181                    | CASE constant_expression COLON statement
+ 182                    | DEFAULT COLON statement
+
+ 183  compound_statement : CURBRAOPEN block_item_list CURBRACLOSE
+ 184                     | CURBRAOPEN CURBRACLOSE
+
+ 185  block_item_list : block_item
+ 186                  | block_item_list MLabel block_item
+
+ 187  block_item : declaration
+ 188             | statement
+
+ 189  expression_statement : expression SEMICOLON
+ 190                       | SEMICOLON
+
+ 191  selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel
+ 192                      | IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel statement
+ 193                      | SWITCH ROBRAOPEN expression ROBRACLOSE statement
+
+ 194  iteration_statement : WHILE MLabel ROBRAOPEN expression ROBRACLOSE MLabel statement
+ 195                      | DO MLabel statement MLabel WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON
+ 196                      | FOR ROBRAOPEN expression_statement MLabel expression_statement ROBRACLOSE MLabel statement
+ 197                      | FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement
+
+ 198  jump_statement : GOTO IDENTIFIER SEMICOLON
+ 199                 | CONTINUE SEMICOLON
+ 200                 | BREAK SEMICOLON
+ 201                 | RETURN expression SEMICOLON
+ 202                 | RETURN SEMICOLON
+
+ 203  translation_unit : external_declaration
+ 204                   | translation_unit external_declaration
+
+ 205  external_declaration : function_definition
+ 206                       | declaration
+
+ 207  function_definition : declaration_specifiers declarator declaration_list CT compound_statement
+ 208                      | declaration_specifiers declarator CT compound_statement
+
+ 209  declaration_list : declaration
+ 210                   | declaration_list declaration
+
+state 0
+	$accept : . translation_unit $end  (0)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	.  error
+
+	translation_unit  goto 22
+	declaration  goto 23
+	declaration_specifiers  goto 24
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	external_declaration  goto 30
+	function_definition  goto 31
+
+
+state 1
+	storage_class_specifier : AUTO .  (99)
+
+	.  reduce 99
+
+
+state 2
+	enum_specifier : ENUM . IDENTIFIER CURBRAOPEN enumerator_list CURBRACLOSE  (118)
+	enum_specifier : ENUM . CURBRAOPEN enumerator_list CURBRACLOSE  (119)
+	enum_specifier : ENUM . IDENTIFIER CURBRAOPEN enumerator_list COMMA CURBRACLOSE  (120)
+	enum_specifier : ENUM . CURBRAOPEN enumerator_list COMMA CURBRACLOSE  (121)
+	enum_specifier : ENUM . IDENTIFIER  (122)
+
+	IDENTIFIER  shift 32
+	CURBRAOPEN  shift 33
+	.  error
+
+
+state 3
+	type_qualifier : RESTRICT .  (128)
+
+	.  reduce 128
+
+
+state 4
+	type_specifier : UNSIGNED .  (109)
+
+	.  reduce 109
+
+
+state 5
+	storage_class_specifier : EXTERN .  (97)
+
+	.  reduce 97
+
+
+state 6
+	type_specifier : VOID .  (101)
+
+	.  reduce 101
+
+
+state 7
+	type_specifier : FLOAT .  (106)
+
+	.  reduce 106
+
+
+state 8
+	type_specifier : SHORT .  (103)
+
+	.  reduce 103
+
+
+state 9
+	type_qualifier : VOLATILE .  (129)
+
+	.  reduce 129
+
+
+state 10
+	type_specifier : CHAR .  (102)
+
+	.  reduce 102
+
+
+state 11
+	type_specifier : SIGNED .  (108)
+
+	.  reduce 108
+
+
+state 12
+	type_qualifier : CONST .  (127)
+
+	.  reduce 127
+
+
+state 13
+	type_specifier : BOOL .  (110)
+
+	.  reduce 110
+
+
+state 14
+	storage_class_specifier : STATIC .  (98)
+
+	.  reduce 98
+
+
+state 15
+	type_specifier : COMPLEX .  (111)
+
+	.  reduce 111
+
+
+state 16
+	function_specifier : INLINE .  (130)
+
+	.  reduce 130
+
+
+state 17
+	type_specifier : IMAGINARY .  (112)
+
+	.  reduce 112
+
+
+state 18
+	type_specifier : INT .  (104)
+
+	.  reduce 104
+
+
+state 19
+	type_specifier : DOUBLE .  (107)
+
+	.  reduce 107
+
+
+state 20
+	type_specifier : LONG .  (105)
+
+	.  reduce 105
+
+
+state 21
+	storage_class_specifier : REGISTER .  (100)
+
+	.  reduce 100
+
+
+state 22
+	$accept : translation_unit . $end  (0)
+	translation_unit : translation_unit . external_declaration  (204)
+
+	$end  accept
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	.  error
+
+	declaration  goto 23
+	declaration_specifiers  goto 24
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	external_declaration  goto 34
+	function_definition  goto 31
+
+
+state 23
+	external_declaration : declaration .  (206)
+
+	.  reduce 206
+
+
+state 24
+	declaration : declaration_specifiers . init_declarator_list SEMICOLON  (83)
+	declaration : declaration_specifiers . SEMICOLON  (84)
+	function_definition : declaration_specifiers . declarator declaration_list CT compound_statement  (207)
+	function_definition : declaration_specifiers . declarator CT compound_statement  (208)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	MUL  shift 37
+	SEMICOLON  shift 38
+	.  error
+
+	direct_declarator  goto 39
+	init_declarator  goto 40
+	declarator  goto 41
+	pointer  goto 42
+	init_declarator_list  goto 43
+
+
+state 25
+	declaration_specifiers : storage_class_specifier . declaration_specifiers  (85)
+	declaration_specifiers : storage_class_specifier .  (86)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  reduce 86
+	ROBRAOPEN  reduce 86
+	ROBRACLOSE  reduce 86
+	MUL  reduce 86
+	SEMICOLON  reduce 86
+	COMMA  reduce 86
+
+	declaration_specifiers  goto 44
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 26
+	declaration_specifiers : type_specifier . declaration_specifiers  (87)
+	declaration_specifiers : type_specifier .  (88)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  reduce 88
+	ROBRAOPEN  reduce 88
+	ROBRACLOSE  reduce 88
+	MUL  reduce 88
+	SEMICOLON  reduce 88
+	COMMA  reduce 88
+
+	declaration_specifiers  goto 45
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 27
+	declaration_specifiers : type_qualifier . declaration_specifiers  (89)
+	declaration_specifiers : type_qualifier .  (90)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  reduce 90
+	ROBRAOPEN  reduce 90
+	ROBRACLOSE  reduce 90
+	MUL  reduce 90
+	SEMICOLON  reduce 90
+	COMMA  reduce 90
+
+	declaration_specifiers  goto 46
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 28
+	declaration_specifiers : function_specifier . declaration_specifiers  (91)
+	declaration_specifiers : function_specifier .  (92)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  reduce 92
+	ROBRAOPEN  reduce 92
+	ROBRACLOSE  reduce 92
+	MUL  reduce 92
+	SEMICOLON  reduce 92
+	COMMA  reduce 92
+
+	declaration_specifiers  goto 47
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 29
+	type_specifier : enum_specifier .  (113)
+
+	.  reduce 113
+
+
+state 30
+	translation_unit : external_declaration .  (203)
+
+	.  reduce 203
+
+
+state 31
+	external_declaration : function_definition .  (205)
+
+	.  reduce 205
+
+
+state 32
+	enum_specifier : ENUM IDENTIFIER . CURBRAOPEN enumerator_list CURBRACLOSE  (118)
+	enum_specifier : ENUM IDENTIFIER . CURBRAOPEN enumerator_list COMMA CURBRACLOSE  (120)
+	enum_specifier : ENUM IDENTIFIER .  (122)
+
+	CURBRAOPEN  shift 48
+	AUTO  reduce 122
+	ENUM  reduce 122
+	RESTRICT  reduce 122
+	UNSIGNED  reduce 122
+	EXTERN  reduce 122
+	VOID  reduce 122
+	FLOAT  reduce 122
+	SHORT  reduce 122
+	VOLATILE  reduce 122
+	CHAR  reduce 122
+	SIGNED  reduce 122
+	CONST  reduce 122
+	BOOL  reduce 122
+	STATIC  reduce 122
+	COMPLEX  reduce 122
+	INLINE  reduce 122
+	IMAGINARY  reduce 122
+	INT  reduce 122
+	DOUBLE  reduce 122
+	LONG  reduce 122
+	REGISTER  reduce 122
+	IDENTIFIER  reduce 122
+	ROBRAOPEN  reduce 122
+	ROBRACLOSE  reduce 122
+	MUL  reduce 122
+	SEMICOLON  reduce 122
+	COMMA  reduce 122
+
+
+state 33
+	enum_specifier : ENUM CURBRAOPEN . enumerator_list CURBRACLOSE  (119)
+	enum_specifier : ENUM CURBRAOPEN . enumerator_list COMMA CURBRACLOSE  (121)
+
+	IDENTIFIER  shift 49
+	.  error
+
+	enumerator_list  goto 50
+	enumerator  goto 51
+
+
+state 34
+	translation_unit : translation_unit external_declaration .  (204)
+
+	.  reduce 204
+
+
+state 35
+	direct_declarator : IDENTIFIER .  (133)
+
+	.  reduce 133
+
+
+state 36
+	direct_declarator : ROBRAOPEN . declarator ROBRACLOSE  (134)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	MUL  shift 37
+	.  error
+
+	direct_declarator  goto 39
+	declarator  goto 52
+	pointer  goto 42
+
+
+state 37
+	pointer : MUL . type_qualifier_list  (147)
+	pointer : MUL .  (148)
+	pointer : MUL . type_qualifier_list pointer  (149)
+	pointer : MUL . pointer  (150)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	MUL  shift 37
+	IDENTIFIER  reduce 148
+	ROBRAOPEN  reduce 148
+
+	pointer  goto 53
+	type_qualifier  goto 54
+	type_qualifier_list  goto 55
+
+
+state 38
+	declaration : declaration_specifiers SEMICOLON .  (84)
+
+	.  reduce 84
+
+
+state 39
+	declarator : direct_declarator .  (132)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list assignment_expression SQBRACLOSE  (135)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list SQBRACLOSE  (136)
+	direct_declarator : direct_declarator . SQBRAOPEN assignment_expression SQBRACLOSE  (137)
+	direct_declarator : direct_declarator . SQBRAOPEN SQBRACLOSE  (138)
+	direct_declarator : direct_declarator . SQBRAOPEN STATIC type_qualifier_list assignment_expression SQBRACLOSE  (139)
+	direct_declarator : direct_declarator . SQBRAOPEN STATIC assignment_expression SQBRACLOSE  (140)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list MUL SQBRACLOSE  (141)
+	direct_declarator : direct_declarator . SQBRAOPEN MUL SQBRACLOSE  (142)
+	direct_declarator : direct_declarator . ROBRAOPEN CT parameter_type_list ROBRACLOSE  (143)
+	direct_declarator : direct_declarator . ROBRAOPEN identifier_list ROBRACLOSE  (144)
+	direct_declarator : direct_declarator . ROBRAOPEN CT ROBRACLOSE  (145)
+
+	SQBRAOPEN  shift 56
+	ROBRAOPEN  shift 57
+	AUTO  reduce 132
+	ENUM  reduce 132
+	RESTRICT  reduce 132
+	UNSIGNED  reduce 132
+	EXTERN  reduce 132
+	VOID  reduce 132
+	FLOAT  reduce 132
+	SHORT  reduce 132
+	VOLATILE  reduce 132
+	CHAR  reduce 132
+	SIGNED  reduce 132
+	CONST  reduce 132
+	BOOL  reduce 132
+	STATIC  reduce 132
+	COMPLEX  reduce 132
+	INLINE  reduce 132
+	IMAGINARY  reduce 132
+	INT  reduce 132
+	DOUBLE  reduce 132
+	LONG  reduce 132
+	REGISTER  reduce 132
+	ROBRACLOSE  reduce 132
+	CURBRAOPEN  reduce 132
+	SEMICOLON  reduce 132
+	ASSIGN  reduce 132
+	COMMA  reduce 132
+
+
+state 40
+	init_declarator_list : init_declarator .  (93)
+
+	.  reduce 93
+
+
+state 41
+	init_declarator : declarator .  (95)
+	init_declarator : declarator . ASSIGN initializer  (96)
+	function_definition : declaration_specifiers declarator . declaration_list CT compound_statement  (207)
+	function_definition : declaration_specifiers declarator . CT compound_statement  (208)
+	CT : .  (146)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	ASSIGN  shift 58
+	CURBRAOPEN  reduce 146
+	SEMICOLON  reduce 95
+	COMMA  reduce 95
+
+	declaration  goto 59
+	declaration_specifiers  goto 60
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	CT  goto 61
+	declaration_list  goto 62
+
+
+state 42
+	declarator : pointer . direct_declarator  (131)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	.  error
+
+	direct_declarator  goto 63
+
+
+state 43
+	declaration : declaration_specifiers init_declarator_list . SEMICOLON  (83)
+	init_declarator_list : init_declarator_list . COMMA init_declarator  (94)
+
+	SEMICOLON  shift 64
+	COMMA  shift 65
+	.  error
+
+
+state 44
+	declaration_specifiers : storage_class_specifier declaration_specifiers .  (85)
+
+	.  reduce 85
+
+
+state 45
+	declaration_specifiers : type_specifier declaration_specifiers .  (87)
+
+	.  reduce 87
+
+
+state 46
+	declaration_specifiers : type_qualifier declaration_specifiers .  (89)
+
+	.  reduce 89
+
+
+state 47
+	declaration_specifiers : function_specifier declaration_specifiers .  (91)
+
+	.  reduce 91
+
+
+state 48
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN . enumerator_list CURBRACLOSE  (118)
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN . enumerator_list COMMA CURBRACLOSE  (120)
+
+	IDENTIFIER  shift 49
+	.  error
+
+	enumerator_list  goto 66
+	enumerator  goto 51
+
+
+state 49
+	enumerator : IDENTIFIER .  (125)
+	enumerator : IDENTIFIER . ASSIGN constant_expression  (126)
+
+	ASSIGN  shift 67
+	CURBRACLOSE  reduce 125
+	COMMA  reduce 125
+
+
+state 50
+	enum_specifier : ENUM CURBRAOPEN enumerator_list . CURBRACLOSE  (119)
+	enum_specifier : ENUM CURBRAOPEN enumerator_list . COMMA CURBRACLOSE  (121)
+	enumerator_list : enumerator_list . COMMA enumerator  (124)
+
+	CURBRACLOSE  shift 68
+	COMMA  shift 69
+	.  error
+
+
+state 51
+	enumerator_list : enumerator .  (123)
+
+	.  reduce 123
+
+
+state 52
+	direct_declarator : ROBRAOPEN declarator . ROBRACLOSE  (134)
+
+	ROBRACLOSE  shift 70
+	.  error
+
+
+state 53
+	pointer : MUL pointer .  (150)
+
+	.  reduce 150
+
+
+state 54
+	type_qualifier_list : type_qualifier .  (151)
+
+	.  reduce 151
+
+
+state 55
+	pointer : MUL type_qualifier_list .  (147)
+	pointer : MUL type_qualifier_list . pointer  (149)
+	type_qualifier_list : type_qualifier_list . type_qualifier  (152)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	MUL  shift 37
+	IDENTIFIER  reduce 147
+	ROBRAOPEN  reduce 147
+
+	pointer  goto 71
+	type_qualifier  goto 72
+
+
+state 56
+	direct_declarator : direct_declarator SQBRAOPEN . type_qualifier_list assignment_expression SQBRACLOSE  (135)
+	direct_declarator : direct_declarator SQBRAOPEN . type_qualifier_list SQBRACLOSE  (136)
+	direct_declarator : direct_declarator SQBRAOPEN . assignment_expression SQBRACLOSE  (137)
+	direct_declarator : direct_declarator SQBRAOPEN . SQBRACLOSE  (138)
+	direct_declarator : direct_declarator SQBRAOPEN . STATIC type_qualifier_list assignment_expression SQBRACLOSE  (139)
+	direct_declarator : direct_declarator SQBRAOPEN . STATIC assignment_expression SQBRACLOSE  (140)
+	direct_declarator : direct_declarator SQBRAOPEN . type_qualifier_list MUL SQBRACLOSE  (141)
+	direct_declarator : direct_declarator SQBRAOPEN . MUL SQBRACLOSE  (142)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	SIZEOF  shift 73
+	STATIC  shift 74
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRACLOSE  shift 81
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 86
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 103
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_qualifier  goto 54
+	type_qualifier_list  goto 109
+
+
+state 57
+	direct_declarator : direct_declarator ROBRAOPEN . CT parameter_type_list ROBRACLOSE  (143)
+	direct_declarator : direct_declarator ROBRAOPEN . identifier_list ROBRACLOSE  (144)
+	direct_declarator : direct_declarator ROBRAOPEN . CT ROBRACLOSE  (145)
+	CT : .  (146)
+
+	IDENTIFIER  shift 110
+	AUTO  reduce 146
+	ENUM  reduce 146
+	RESTRICT  reduce 146
+	UNSIGNED  reduce 146
+	EXTERN  reduce 146
+	VOID  reduce 146
+	FLOAT  reduce 146
+	SHORT  reduce 146
+	VOLATILE  reduce 146
+	CHAR  reduce 146
+	SIGNED  reduce 146
+	CONST  reduce 146
+	BOOL  reduce 146
+	STATIC  reduce 146
+	COMPLEX  reduce 146
+	INLINE  reduce 146
+	IMAGINARY  reduce 146
+	INT  reduce 146
+	DOUBLE  reduce 146
+	LONG  reduce 146
+	REGISTER  reduce 146
+	ROBRACLOSE  reduce 146
+
+	CT  goto 111
+	identifier_list  goto 112
+
+
+state 58
+	init_declarator : declarator ASSIGN . initializer  (96)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 116
+
+
+state 59
+	declaration_list : declaration .  (209)
+
+	.  reduce 209
+
+
+state 60
+	declaration : declaration_specifiers . init_declarator_list SEMICOLON  (83)
+	declaration : declaration_specifiers . SEMICOLON  (84)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	MUL  shift 37
+	SEMICOLON  shift 38
+	.  error
+
+	direct_declarator  goto 39
+	init_declarator  goto 40
+	declarator  goto 117
+	pointer  goto 42
+	init_declarator_list  goto 43
+
+
+state 61
+	function_definition : declaration_specifiers declarator CT . compound_statement  (208)
+
+	CURBRAOPEN  shift 118
+	.  error
+
+	compound_statement  goto 119
+
+
+state 62
+	function_definition : declaration_specifiers declarator declaration_list . CT compound_statement  (207)
+	declaration_list : declaration_list . declaration  (210)
+	CT : .  (146)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	CURBRAOPEN  reduce 146
+
+	declaration  goto 120
+	declaration_specifiers  goto 60
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	CT  goto 121
+
+
+state 63
+	declarator : pointer direct_declarator .  (131)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list assignment_expression SQBRACLOSE  (135)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list SQBRACLOSE  (136)
+	direct_declarator : direct_declarator . SQBRAOPEN assignment_expression SQBRACLOSE  (137)
+	direct_declarator : direct_declarator . SQBRAOPEN SQBRACLOSE  (138)
+	direct_declarator : direct_declarator . SQBRAOPEN STATIC type_qualifier_list assignment_expression SQBRACLOSE  (139)
+	direct_declarator : direct_declarator . SQBRAOPEN STATIC assignment_expression SQBRACLOSE  (140)
+	direct_declarator : direct_declarator . SQBRAOPEN type_qualifier_list MUL SQBRACLOSE  (141)
+	direct_declarator : direct_declarator . SQBRAOPEN MUL SQBRACLOSE  (142)
+	direct_declarator : direct_declarator . ROBRAOPEN CT parameter_type_list ROBRACLOSE  (143)
+	direct_declarator : direct_declarator . ROBRAOPEN identifier_list ROBRACLOSE  (144)
+	direct_declarator : direct_declarator . ROBRAOPEN CT ROBRACLOSE  (145)
+
+	SQBRAOPEN  shift 56
+	ROBRAOPEN  shift 57
+	AUTO  reduce 131
+	ENUM  reduce 131
+	RESTRICT  reduce 131
+	UNSIGNED  reduce 131
+	EXTERN  reduce 131
+	VOID  reduce 131
+	FLOAT  reduce 131
+	SHORT  reduce 131
+	VOLATILE  reduce 131
+	CHAR  reduce 131
+	SIGNED  reduce 131
+	CONST  reduce 131
+	BOOL  reduce 131
+	STATIC  reduce 131
+	COMPLEX  reduce 131
+	INLINE  reduce 131
+	IMAGINARY  reduce 131
+	INT  reduce 131
+	DOUBLE  reduce 131
+	LONG  reduce 131
+	REGISTER  reduce 131
+	ROBRACLOSE  reduce 131
+	CURBRAOPEN  reduce 131
+	SEMICOLON  reduce 131
+	ASSIGN  reduce 131
+	COMMA  reduce 131
+
+
+state 64
+	declaration : declaration_specifiers init_declarator_list SEMICOLON .  (83)
+
+	.  reduce 83
+
+
+state 65
+	init_declarator_list : init_declarator_list COMMA . init_declarator  (94)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	MUL  shift 37
+	.  error
+
+	direct_declarator  goto 39
+	init_declarator  goto 122
+	declarator  goto 117
+	pointer  goto 42
+
+
+state 66
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list . CURBRACLOSE  (118)
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list . COMMA CURBRACLOSE  (120)
+	enumerator_list : enumerator_list . COMMA enumerator  (124)
+
+	CURBRACLOSE  shift 123
+	COMMA  shift 124
+	.  error
+
+
+state 67
+	enumerator : IDENTIFIER ASSIGN . constant_expression  (126)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 125
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	constant_expression  goto 127
+
+
+state 68
+	enum_specifier : ENUM CURBRAOPEN enumerator_list CURBRACLOSE .  (119)
+
+	.  reduce 119
+
+
+state 69
+	enum_specifier : ENUM CURBRAOPEN enumerator_list COMMA . CURBRACLOSE  (121)
+	enumerator_list : enumerator_list COMMA . enumerator  (124)
+
+	IDENTIFIER  shift 49
+	CURBRACLOSE  shift 128
+	.  error
+
+	enumerator  goto 129
+
+
+state 70
+	direct_declarator : ROBRAOPEN declarator ROBRACLOSE .  (134)
+
+	.  reduce 134
+
+
+state 71
+	pointer : MUL type_qualifier_list pointer .  (149)
+
+	.  reduce 149
+
+
+state 72
+	type_qualifier_list : type_qualifier_list type_qualifier .  (152)
+
+	.  reduce 152
+
+
+state 73
+	unary_expression : SIZEOF . unary_expression  (25)
+	unary_expression : SIZEOF . ROBRAOPEN type_name ROBRACLOSE  (26)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 130
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 131
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 74
+	direct_declarator : direct_declarator SQBRAOPEN STATIC . type_qualifier_list assignment_expression SQBRACLOSE  (139)
+	direct_declarator : direct_declarator SQBRAOPEN STATIC . assignment_expression SQBRACLOSE  (140)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 132
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_qualifier  goto 54
+	type_qualifier_list  goto 133
+
+
+state 75
+	primary_expression : IDENTIFIER .  (1)
+
+	.  reduce 1
+
+
+state 76
+	constant : INTEGER_CONSTANT .  (5)
+
+	.  reduce 5
+
+
+state 77
+	constant : FLOATING_CONSTANT .  (6)
+
+	.  reduce 6
+
+
+state 78
+	constant : CHARACTER_CONSTANT .  (8)
+
+	.  reduce 8
+
+
+state 79
+	constant : ENUMERATION_CONSTANT .  (7)
+
+	.  reduce 7
+
+
+state 80
+	primary_expression : STRING_LITERAL .  (3)
+
+	.  reduce 3
+
+
+state 81
+	direct_declarator : direct_declarator SQBRAOPEN SQBRACLOSE .  (138)
+
+	.  reduce 138
+
+
+state 82
+	primary_expression : ROBRAOPEN . expression ROBRACLOSE  (4)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	cast_expression : ROBRAOPEN . type_name ROBRACLOSE cast_expression  (34)
+
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	SIZEOF  shift 73
+	BOOL  shift 13
+	COMPLEX  shift 15
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 134
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_name  goto 136
+	type_specifier  goto 137
+	type_qualifier  goto 138
+	enum_specifier  goto 29
+	specifier_qualifier_list  goto 139
+
+
+state 83
+	unary_expression : INC . unary_expression  (22)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 140
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 141
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 84
+	unary_expression : DEC . unary_expression  (23)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 140
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 142
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 85
+	unary_operator : AMP .  (27)
+
+	.  reduce 27
+
+
+state 86
+	unary_operator : MUL .  (28)
+	direct_declarator : direct_declarator SQBRAOPEN MUL . SQBRACLOSE  (142)
+
+	SQBRACLOSE  shift 143
+	SIZEOF  reduce 28
+	IDENTIFIER  reduce 28
+	INTEGER_CONSTANT  reduce 28
+	FLOATING_CONSTANT  reduce 28
+	CHARACTER_CONSTANT  reduce 28
+	ENUMERATION_CONSTANT  reduce 28
+	STRING_LITERAL  reduce 28
+	ROBRAOPEN  reduce 28
+	INC  reduce 28
+	DEC  reduce 28
+	AMP  reduce 28
+	MUL  reduce 28
+	ADD  reduce 28
+	SUB  reduce 28
+	NEG  reduce 28
+	EXCLAIM  reduce 28
+
+
+state 87
+	unary_operator : ADD .  (29)
+
+	.  reduce 29
+
+
+state 88
+	unary_operator : SUB .  (30)
+
+	.  reduce 30
+
+
+state 89
+	unary_operator : NEG .  (31)
+
+	.  reduce 31
+
+
+state 90
+	unary_operator : EXCLAIM .  (32)
+
+	.  reduce 32
+
+
+state 91
+	postfix_expression : primary_expression .  (9)
+
+	.  reduce 9
+
+
+state 92
+	multiplicative_expression : multiplicative_expression . MUL cast_expression  (36)
+	multiplicative_expression : multiplicative_expression . DIV cast_expression  (37)
+	multiplicative_expression : multiplicative_expression . MODULO cast_expression  (38)
+	additive_expression : multiplicative_expression .  (39)
+
+	MUL  shift 144
+	DIV  shift 145
+	MODULO  shift 146
+	SQBRACLOSE  reduce 39
+	ROBRACLOSE  reduce 39
+	CURBRACLOSE  reduce 39
+	AMP  reduce 39
+	ADD  reduce 39
+	SUB  reduce 39
+	SHL  reduce 39
+	SHR  reduce 39
+	BITSHL  reduce 39
+	BITSHR  reduce 39
+	LTE  reduce 39
+	GTE  reduce 39
+	EQ  reduce 39
+	NEQ  reduce 39
+	BITXOR  reduce 39
+	BITOR  reduce 39
+	AND  reduce 39
+	OR  reduce 39
+	QUESTION  reduce 39
+	COLON  reduce 39
+	SEMICOLON  reduce 39
+	COMMA  reduce 39
+
+
+state 93
+	additive_expression : additive_expression . ADD multiplicative_expression  (40)
+	additive_expression : additive_expression . SUB multiplicative_expression  (41)
+	shift_expression : additive_expression .  (42)
+
+	ADD  shift 147
+	SUB  shift 148
+	SQBRACLOSE  reduce 42
+	ROBRACLOSE  reduce 42
+	CURBRACLOSE  reduce 42
+	AMP  reduce 42
+	SHL  reduce 42
+	SHR  reduce 42
+	BITSHL  reduce 42
+	BITSHR  reduce 42
+	LTE  reduce 42
+	GTE  reduce 42
+	EQ  reduce 42
+	NEQ  reduce 42
+	BITXOR  reduce 42
+	BITOR  reduce 42
+	AND  reduce 42
+	OR  reduce 42
+	QUESTION  reduce 42
+	COLON  reduce 42
+	SEMICOLON  reduce 42
+	COMMA  reduce 42
+
+
+state 94
+	shift_expression : shift_expression . SHL additive_expression  (43)
+	shift_expression : shift_expression . SHR additive_expression  (44)
+	relational_expression : shift_expression .  (45)
+
+	SHL  shift 149
+	SHR  shift 150
+	SQBRACLOSE  reduce 45
+	ROBRACLOSE  reduce 45
+	CURBRACLOSE  reduce 45
+	AMP  reduce 45
+	BITSHL  reduce 45
+	BITSHR  reduce 45
+	LTE  reduce 45
+	GTE  reduce 45
+	EQ  reduce 45
+	NEQ  reduce 45
+	BITXOR  reduce 45
+	BITOR  reduce 45
+	AND  reduce 45
+	OR  reduce 45
+	QUESTION  reduce 45
+	COLON  reduce 45
+	SEMICOLON  reduce 45
+	COMMA  reduce 45
+
+
+state 95
+	relational_expression : relational_expression . BITSHL shift_expression  (46)
+	relational_expression : relational_expression . BITSHR shift_expression  (47)
+	relational_expression : relational_expression . LTE shift_expression  (48)
+	relational_expression : relational_expression . GTE shift_expression  (49)
+	equality_expression : relational_expression .  (50)
+
+	BITSHL  shift 151
+	BITSHR  shift 152
+	LTE  shift 153
+	GTE  shift 154
+	SQBRACLOSE  reduce 50
+	ROBRACLOSE  reduce 50
+	CURBRACLOSE  reduce 50
+	AMP  reduce 50
+	EQ  reduce 50
+	NEQ  reduce 50
+	BITXOR  reduce 50
+	BITOR  reduce 50
+	AND  reduce 50
+	OR  reduce 50
+	QUESTION  reduce 50
+	COLON  reduce 50
+	SEMICOLON  reduce 50
+	COMMA  reduce 50
+
+
+state 96
+	equality_expression : equality_expression . EQ relational_expression  (51)
+	equality_expression : equality_expression . NEQ relational_expression  (52)
+	AND_expression : equality_expression .  (53)
+
+	EQ  shift 155
+	NEQ  shift 156
+	SQBRACLOSE  reduce 53
+	ROBRACLOSE  reduce 53
+	CURBRACLOSE  reduce 53
+	AMP  reduce 53
+	BITXOR  reduce 53
+	BITOR  reduce 53
+	AND  reduce 53
+	OR  reduce 53
+	QUESTION  reduce 53
+	COLON  reduce 53
+	SEMICOLON  reduce 53
+	COMMA  reduce 53
+
+
+state 97
+	AND_expression : AND_expression . AMP equality_expression  (54)
+	exclusive_OR_expression : AND_expression .  (55)
+
+	AMP  shift 157
+	SQBRACLOSE  reduce 55
+	ROBRACLOSE  reduce 55
+	CURBRACLOSE  reduce 55
+	BITXOR  reduce 55
+	BITOR  reduce 55
+	AND  reduce 55
+	OR  reduce 55
+	QUESTION  reduce 55
+	COLON  reduce 55
+	SEMICOLON  reduce 55
+	COMMA  reduce 55
+
+
+state 98
+	exclusive_OR_expression : exclusive_OR_expression . BITXOR AND_expression  (56)
+	inclusive_OR_expression : exclusive_OR_expression .  (57)
+
+	BITXOR  shift 158
+	SQBRACLOSE  reduce 57
+	ROBRACLOSE  reduce 57
+	CURBRACLOSE  reduce 57
+	BITOR  reduce 57
+	AND  reduce 57
+	OR  reduce 57
+	QUESTION  reduce 57
+	COLON  reduce 57
+	SEMICOLON  reduce 57
+	COMMA  reduce 57
+
+
+state 99
+	inclusive_OR_expression : inclusive_OR_expression . BITOR exclusive_OR_expression  (58)
+	logical_AND_expression : inclusive_OR_expression .  (59)
+
+	BITOR  shift 159
+	SQBRACLOSE  reduce 59
+	ROBRACLOSE  reduce 59
+	CURBRACLOSE  reduce 59
+	AND  reduce 59
+	OR  reduce 59
+	QUESTION  reduce 59
+	COLON  reduce 59
+	SEMICOLON  reduce 59
+	COMMA  reduce 59
+
+
+state 100
+	logical_AND_expression : logical_AND_expression . NLabel AND MLabel inclusive_OR_expression  (60)
+	logical_OR_expression : logical_AND_expression .  (61)
+	NLabel : .  (64)
+
+	SQBRACLOSE  reduce 61
+	ROBRACLOSE  reduce 61
+	CURBRACLOSE  reduce 61
+	AND  reduce 64
+	OR  reduce 61
+	QUESTION  reduce 61
+	COLON  reduce 61
+	SEMICOLON  reduce 61
+	COMMA  reduce 61
+
+	NLabel  goto 160
+
+
+state 101
+	logical_OR_expression : logical_OR_expression . NLabel OR MLabel logical_AND_expression  (62)
+	conditional_expression : logical_OR_expression .  (65)
+	conditional_expression : logical_OR_expression . NLabel QUESTION MLabel expression NLabel COLON MLabel conditional_expression  (66)
+	NLabel : .  (64)
+
+	SQBRACLOSE  reduce 65
+	ROBRACLOSE  reduce 65
+	CURBRACLOSE  reduce 65
+	OR  reduce 64
+	QUESTION  reduce 64
+	COLON  reduce 65
+	SEMICOLON  reduce 65
+	COMMA  reduce 65
+
+	NLabel  goto 161
+
+
+state 102
+	assignment_expression : conditional_expression .  (67)
+
+	.  reduce 67
+
+
+state 103
+	direct_declarator : direct_declarator SQBRAOPEN assignment_expression . SQBRACLOSE  (137)
+
+	SQBRACLOSE  shift 162
+	.  error
+
+
+state 104
+	postfix_expression : postfix_expression . SQBRAOPEN expression SQBRACLOSE  (10)
+	postfix_expression : postfix_expression . ROBRAOPEN ROBRACLOSE  (11)
+	postfix_expression : postfix_expression . ROBRAOPEN argument_expression_list ROBRACLOSE  (12)
+	postfix_expression : postfix_expression . DOT IDENTIFIER  (13)
+	postfix_expression : postfix_expression . ACC IDENTIFIER  (14)
+	postfix_expression : postfix_expression . INC  (15)
+	postfix_expression : postfix_expression . DEC  (16)
+	unary_expression : postfix_expression .  (21)
+
+	SQBRAOPEN  shift 163
+	ROBRAOPEN  shift 164
+	DOT  shift 165
+	ACC  shift 166
+	INC  shift 167
+	DEC  shift 168
+	SQBRACLOSE  reduce 21
+	ROBRACLOSE  reduce 21
+	CURBRACLOSE  reduce 21
+	AMP  reduce 21
+	MUL  reduce 21
+	ADD  reduce 21
+	SUB  reduce 21
+	DIV  reduce 21
+	MODULO  reduce 21
+	SHL  reduce 21
+	SHR  reduce 21
+	BITSHL  reduce 21
+	BITSHR  reduce 21
+	LTE  reduce 21
+	GTE  reduce 21
+	EQ  reduce 21
+	NEQ  reduce 21
+	BITXOR  reduce 21
+	BITOR  reduce 21
+	AND  reduce 21
+	OR  reduce 21
+	QUESTION  reduce 21
+	COLON  reduce 21
+	SEMICOLON  reduce 21
+	ASSIGN  reduce 21
+	STAREQ  reduce 21
+	DIVEQ  reduce 21
+	MODEQ  reduce 21
+	PLUSEQ  reduce 21
+	MINUSEQ  reduce 21
+	SHLEQ  reduce 21
+	SHREQ  reduce 21
+	BINANDEQ  reduce 21
+	BINXOREQ  reduce 21
+	BINOREQ  reduce 21
+	COMMA  reduce 21
+
+
+state 105
+	cast_expression : unary_expression .  (33)
+	assignment_expression : unary_expression . assignment_operator assignment_expression  (68)
+
+	ASSIGN  shift 169
+	STAREQ  shift 170
+	DIVEQ  shift 171
+	MODEQ  shift 172
+	PLUSEQ  shift 173
+	MINUSEQ  shift 174
+	SHLEQ  shift 175
+	SHREQ  shift 176
+	BINANDEQ  shift 177
+	BINXOREQ  shift 178
+	BINOREQ  shift 179
+	SQBRACLOSE  reduce 33
+	ROBRACLOSE  reduce 33
+	CURBRACLOSE  reduce 33
+	AMP  reduce 33
+	MUL  reduce 33
+	ADD  reduce 33
+	SUB  reduce 33
+	DIV  reduce 33
+	MODULO  reduce 33
+	SHL  reduce 33
+	SHR  reduce 33
+	BITSHL  reduce 33
+	BITSHR  reduce 33
+	LTE  reduce 33
+	GTE  reduce 33
+	EQ  reduce 33
+	NEQ  reduce 33
+	BITXOR  reduce 33
+	BITOR  reduce 33
+	AND  reduce 33
+	OR  reduce 33
+	QUESTION  reduce 33
+	COLON  reduce 33
+	SEMICOLON  reduce 33
+	COMMA  reduce 33
+
+	assignment_operator  goto 180
+
+
+state 106
+	multiplicative_expression : cast_expression .  (35)
+
+	.  reduce 35
+
+
+state 107
+	unary_expression : unary_operator . cast_expression  (24)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 181
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 108
+	primary_expression : constant .  (2)
+
+	.  reduce 2
+
+
+state 109
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list . assignment_expression SQBRACLOSE  (135)
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list . SQBRACLOSE  (136)
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list . MUL SQBRACLOSE  (141)
+	type_qualifier_list : type_qualifier_list . type_qualifier  (152)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRACLOSE  shift 182
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 183
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 184
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_qualifier  goto 72
+
+
+state 110
+	identifier_list : IDENTIFIER .  (159)
+
+	.  reduce 159
+
+
+state 111
+	direct_declarator : direct_declarator ROBRAOPEN CT . parameter_type_list ROBRACLOSE  (143)
+	direct_declarator : direct_declarator ROBRAOPEN CT . ROBRACLOSE  (145)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	ROBRACLOSE  shift 185
+	.  error
+
+	declaration_specifiers  goto 186
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	parameter_type_list  goto 187
+	parameter_list  goto 188
+	parameter_declaration  goto 189
+
+
+state 112
+	direct_declarator : direct_declarator ROBRAOPEN identifier_list . ROBRACLOSE  (144)
+	identifier_list : identifier_list . COMMA IDENTIFIER  (160)
+
+	ROBRACLOSE  shift 190
+	COMMA  shift 191
+	.  error
+
+
+state 113
+	initializer : CURBRAOPEN . initializer_list CURBRACLOSE  (163)
+	initializer : CURBRAOPEN . initializer_list COMMA CURBRACLOSE  (164)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRAOPEN  shift 192
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	DOT  shift 193
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 194
+	initializer_list  goto 195
+	designation  goto 196
+	designator_list  goto 197
+	designator  goto 198
+
+
+state 114
+	unary_operator : MUL .  (28)
+
+	.  reduce 28
+
+
+state 115
+	initializer : assignment_expression .  (162)
+
+	.  reduce 162
+
+
+state 116
+	init_declarator : declarator ASSIGN initializer .  (96)
+
+	.  reduce 96
+
+
+state 117
+	init_declarator : declarator .  (95)
+	init_declarator : declarator . ASSIGN initializer  (96)
+
+	ASSIGN  shift 58
+	SEMICOLON  reduce 95
+	COMMA  reduce 95
+
+
+state 118
+	compound_statement : CURBRAOPEN . block_item_list CURBRACLOSE  (183)
+	compound_statement : CURBRAOPEN . CURBRACLOSE  (184)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	BREAK  shift 199
+	EXTERN  shift 5
+	RETURN  shift 200
+	VOID  shift 6
+	CASE  shift 201
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	FOR  shift 202
+	SIGNED  shift 11
+	WHILE  shift 203
+	CONST  shift 12
+	GOTO  shift 204
+	SIZEOF  shift 73
+	BOOL  shift 13
+	CONTINUE  shift 205
+	IF  shift 206
+	STATIC  shift 14
+	COMPLEX  shift 15
+	DEFAULT  shift 207
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	DO  shift 208
+	INT  shift 18
+	SWITCH  shift 209
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	CURBRACLOSE  shift 211
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 215
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+	block_item  goto 221
+	block_item_list  goto 222
+	declaration  goto 223
+	declaration_specifiers  goto 60
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 119
+	function_definition : declaration_specifiers declarator CT compound_statement .  (208)
+
+	.  reduce 208
+
+
+state 120
+	declaration_list : declaration_list declaration .  (210)
+
+	.  reduce 210
+
+
+state 121
+	function_definition : declaration_specifiers declarator declaration_list CT . compound_statement  (207)
+
+	CURBRAOPEN  shift 118
+	.  error
+
+	compound_statement  goto 224
+
+
+state 122
+	init_declarator_list : init_declarator_list COMMA init_declarator .  (94)
+
+	.  reduce 94
+
+
+state 123
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list CURBRACLOSE .  (118)
+
+	.  reduce 118
+
+
+state 124
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list COMMA . CURBRACLOSE  (120)
+	enumerator_list : enumerator_list COMMA . enumerator  (124)
+
+	IDENTIFIER  shift 49
+	CURBRACLOSE  shift 225
+	.  error
+
+	enumerator  goto 129
+
+
+state 125
+	constant_expression : conditional_expression .  (82)
+
+	.  reduce 82
+
+
+state 126
+	cast_expression : unary_expression .  (33)
+
+	.  reduce 33
+
+
+state 127
+	enumerator : IDENTIFIER ASSIGN constant_expression .  (126)
+
+	.  reduce 126
+
+
+state 128
+	enum_specifier : ENUM CURBRAOPEN enumerator_list COMMA CURBRACLOSE .  (121)
+
+	.  reduce 121
+
+
+state 129
+	enumerator_list : enumerator_list COMMA enumerator .  (124)
+
+	.  reduce 124
+
+
+state 130
+	primary_expression : ROBRAOPEN . expression ROBRACLOSE  (4)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	unary_expression : SIZEOF ROBRAOPEN . type_name ROBRACLOSE  (26)
+
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	SIZEOF  shift 73
+	BOOL  shift 13
+	COMPLEX  shift 15
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 134
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_name  goto 226
+	type_specifier  goto 137
+	type_qualifier  goto 138
+	enum_specifier  goto 29
+	specifier_qualifier_list  goto 139
+
+
+state 131
+	unary_expression : SIZEOF unary_expression .  (25)
+
+	.  reduce 25
+
+
+state 132
+	direct_declarator : direct_declarator SQBRAOPEN STATIC assignment_expression . SQBRACLOSE  (140)
+
+	SQBRACLOSE  shift 227
+	.  error
+
+
+state 133
+	direct_declarator : direct_declarator SQBRAOPEN STATIC type_qualifier_list . assignment_expression SQBRACLOSE  (139)
+	type_qualifier_list : type_qualifier_list . type_qualifier  (152)
+
+	RESTRICT  shift 3
+	VOLATILE  shift 9
+	CONST  shift 12
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 228
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_qualifier  goto 72
+
+
+state 134
+	primary_expression : ROBRAOPEN expression . ROBRACLOSE  (4)
+	expression : expression . COMMA assignment_expression  (81)
+
+	ROBRACLOSE  shift 229
+	COMMA  shift 230
+	.  error
+
+
+state 135
+	expression : assignment_expression .  (80)
+
+	.  reduce 80
+
+
+state 136
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	cast_expression : ROBRAOPEN type_name . ROBRACLOSE cast_expression  (34)
+
+	ROBRACLOSE  shift 231
+	.  error
+
+
+state 137
+	specifier_qualifier_list : type_specifier . specifier_qualifier_list  (114)
+	specifier_qualifier_list : type_specifier .  (115)
+
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	COMPLEX  shift 15
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	ROBRACLOSE  reduce 115
+
+	type_specifier  goto 137
+	type_qualifier  goto 138
+	enum_specifier  goto 29
+	specifier_qualifier_list  goto 232
+
+
+state 138
+	specifier_qualifier_list : type_qualifier . specifier_qualifier_list  (116)
+	specifier_qualifier_list : type_qualifier .  (117)
+
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	COMPLEX  shift 15
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	ROBRACLOSE  reduce 117
+
+	type_specifier  goto 137
+	type_qualifier  goto 138
+	enum_specifier  goto 29
+	specifier_qualifier_list  goto 233
+
+
+state 139
+	type_name : specifier_qualifier_list .  (161)
+
+	.  reduce 161
+
+
+state 140
+	primary_expression : ROBRAOPEN . expression ROBRACLOSE  (4)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN . type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	SIZEOF  shift 73
+	BOOL  shift 13
+	COMPLEX  shift 15
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 134
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	type_name  goto 234
+	type_specifier  goto 137
+	type_qualifier  goto 138
+	enum_specifier  goto 29
+	specifier_qualifier_list  goto 139
+
+
+state 141
+	unary_expression : INC unary_expression .  (22)
+
+	.  reduce 22
+
+
+state 142
+	unary_expression : DEC unary_expression .  (23)
+
+	.  reduce 23
+
+
+state 143
+	direct_declarator : direct_declarator SQBRAOPEN MUL SQBRACLOSE .  (142)
+
+	.  reduce 142
+
+
+state 144
+	multiplicative_expression : multiplicative_expression MUL . cast_expression  (36)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 235
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 145
+	multiplicative_expression : multiplicative_expression DIV . cast_expression  (37)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 236
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 146
+	multiplicative_expression : multiplicative_expression MODULO . cast_expression  (38)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 237
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 147
+	additive_expression : additive_expression ADD . multiplicative_expression  (40)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 238
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 148
+	additive_expression : additive_expression SUB . multiplicative_expression  (41)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 239
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 149
+	shift_expression : shift_expression SHL . additive_expression  (43)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 240
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 150
+	shift_expression : shift_expression SHR . additive_expression  (44)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 241
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 151
+	relational_expression : relational_expression BITSHL . shift_expression  (46)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 242
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 152
+	relational_expression : relational_expression BITSHR . shift_expression  (47)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 243
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 153
+	relational_expression : relational_expression LTE . shift_expression  (48)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 244
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 154
+	relational_expression : relational_expression GTE . shift_expression  (49)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 245
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 155
+	equality_expression : equality_expression EQ . relational_expression  (51)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 246
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 156
+	equality_expression : equality_expression NEQ . relational_expression  (52)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 247
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 157
+	AND_expression : AND_expression AMP . equality_expression  (54)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 248
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 158
+	exclusive_OR_expression : exclusive_OR_expression BITXOR . AND_expression  (56)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 249
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 159
+	inclusive_OR_expression : inclusive_OR_expression BITOR . exclusive_OR_expression  (58)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 250
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 160
+	logical_AND_expression : logical_AND_expression NLabel . AND MLabel inclusive_OR_expression  (60)
+
+	AND  shift 251
+	.  error
+
+
+state 161
+	logical_OR_expression : logical_OR_expression NLabel . OR MLabel logical_AND_expression  (62)
+	conditional_expression : logical_OR_expression NLabel . QUESTION MLabel expression NLabel COLON MLabel conditional_expression  (66)
+
+	OR  shift 252
+	QUESTION  shift 253
+	.  error
+
+
+state 162
+	direct_declarator : direct_declarator SQBRAOPEN assignment_expression SQBRACLOSE .  (137)
+
+	.  reduce 137
+
+
+state 163
+	postfix_expression : postfix_expression SQBRAOPEN . expression SQBRACLOSE  (10)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 254
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 164
+	postfix_expression : postfix_expression ROBRAOPEN . ROBRACLOSE  (11)
+	postfix_expression : postfix_expression ROBRAOPEN . argument_expression_list ROBRACLOSE  (12)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	ROBRACLOSE  shift 255
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 256
+	argument_expression_list  goto 257
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 165
+	postfix_expression : postfix_expression DOT . IDENTIFIER  (13)
+
+	IDENTIFIER  shift 258
+	.  error
+
+
+state 166
+	postfix_expression : postfix_expression ACC . IDENTIFIER  (14)
+
+	IDENTIFIER  shift 259
+	.  error
+
+
+state 167
+	postfix_expression : postfix_expression INC .  (15)
+
+	.  reduce 15
+
+
+state 168
+	postfix_expression : postfix_expression DEC .  (16)
+
+	.  reduce 16
+
+
+state 169
+	assignment_operator : ASSIGN .  (69)
+
+	.  reduce 69
+
+
+state 170
+	assignment_operator : STAREQ .  (70)
+
+	.  reduce 70
+
+
+state 171
+	assignment_operator : DIVEQ .  (71)
+
+	.  reduce 71
+
+
+state 172
+	assignment_operator : MODEQ .  (72)
+
+	.  reduce 72
+
+
+state 173
+	assignment_operator : PLUSEQ .  (73)
+
+	.  reduce 73
+
+
+state 174
+	assignment_operator : MINUSEQ .  (74)
+
+	.  reduce 74
+
+
+state 175
+	assignment_operator : SHLEQ .  (75)
+
+	.  reduce 75
+
+
+state 176
+	assignment_operator : SHREQ .  (76)
+
+	.  reduce 76
+
+
+state 177
+	assignment_operator : BINANDEQ .  (77)
+
+	.  reduce 77
+
+
+state 178
+	assignment_operator : BINXOREQ .  (78)
+
+	.  reduce 78
+
+
+state 179
+	assignment_operator : BINOREQ .  (79)
+
+	.  reduce 79
+
+
+state 180
+	assignment_expression : unary_expression assignment_operator . assignment_expression  (68)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 260
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 181
+	unary_expression : unary_operator cast_expression .  (24)
+
+	.  reduce 24
+
+
+state 182
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list SQBRACLOSE .  (136)
+
+	.  reduce 136
+
+
+state 183
+	unary_operator : MUL .  (28)
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list MUL . SQBRACLOSE  (141)
+
+	SQBRACLOSE  shift 261
+	SIZEOF  reduce 28
+	IDENTIFIER  reduce 28
+	INTEGER_CONSTANT  reduce 28
+	FLOATING_CONSTANT  reduce 28
+	CHARACTER_CONSTANT  reduce 28
+	ENUMERATION_CONSTANT  reduce 28
+	STRING_LITERAL  reduce 28
+	ROBRAOPEN  reduce 28
+	INC  reduce 28
+	DEC  reduce 28
+	AMP  reduce 28
+	MUL  reduce 28
+	ADD  reduce 28
+	SUB  reduce 28
+	NEG  reduce 28
+	EXCLAIM  reduce 28
+
+
+state 184
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list assignment_expression . SQBRACLOSE  (135)
+
+	SQBRACLOSE  shift 262
+	.  error
+
+
+state 185
+	direct_declarator : direct_declarator ROBRAOPEN CT ROBRACLOSE .  (145)
+
+	.  reduce 145
+
+
+state 186
+	parameter_declaration : declaration_specifiers . declarator  (157)
+	parameter_declaration : declaration_specifiers .  (158)
+
+	IDENTIFIER  shift 35
+	ROBRAOPEN  shift 36
+	MUL  shift 37
+	ROBRACLOSE  reduce 158
+	COMMA  reduce 158
+
+	direct_declarator  goto 39
+	declarator  goto 263
+	pointer  goto 42
+
+
+state 187
+	direct_declarator : direct_declarator ROBRAOPEN CT parameter_type_list . ROBRACLOSE  (143)
+
+	ROBRACLOSE  shift 264
+	.  error
+
+
+state 188
+	parameter_type_list : parameter_list .  (153)
+	parameter_type_list : parameter_list . COMMA DOTS  (154)
+	parameter_list : parameter_list . COMMA parameter_declaration  (156)
+
+	COMMA  shift 265
+	ROBRACLOSE  reduce 153
+
+
+state 189
+	parameter_list : parameter_declaration .  (155)
+
+	.  reduce 155
+
+
+state 190
+	direct_declarator : direct_declarator ROBRAOPEN identifier_list ROBRACLOSE .  (144)
+
+	.  reduce 144
+
+
+state 191
+	identifier_list : identifier_list COMMA . IDENTIFIER  (160)
+
+	IDENTIFIER  shift 266
+	.  error
+
+
+state 192
+	designator : SQBRAOPEN . constant_expression SQBRACLOSE  (172)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 125
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	constant_expression  goto 267
+
+
+state 193
+	designator : DOT . IDENTIFIER  (173)
+
+	IDENTIFIER  shift 268
+	.  error
+
+
+state 194
+	initializer_list : initializer .  (166)
+
+	.  reduce 166
+
+
+state 195
+	initializer : CURBRAOPEN initializer_list . CURBRACLOSE  (163)
+	initializer : CURBRAOPEN initializer_list . COMMA CURBRACLOSE  (164)
+	initializer_list : initializer_list . COMMA designation initializer  (167)
+	initializer_list : initializer_list . COMMA initializer  (168)
+
+	CURBRACLOSE  shift 269
+	COMMA  shift 270
+	.  error
+
+
+state 196
+	initializer_list : designation . initializer  (165)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 271
+
+
+state 197
+	designation : designator_list . ASSIGN  (169)
+	designator_list : designator_list . designator  (171)
+
+	SQBRAOPEN  shift 192
+	DOT  shift 193
+	ASSIGN  shift 272
+	.  error
+
+	designator  goto 273
+
+
+state 198
+	designator_list : designator .  (170)
+
+	.  reduce 170
+
+
+state 199
+	jump_statement : BREAK . SEMICOLON  (200)
+
+	SEMICOLON  shift 274
+	.  error
+
+
+state 200
+	jump_statement : RETURN . expression SEMICOLON  (201)
+	jump_statement : RETURN . SEMICOLON  (202)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 275
+	.  error
+
+	expression  goto 276
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 201
+	labeled_statement : CASE . constant_expression COLON statement  (181)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 125
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	constant_expression  goto 277
+
+
+state 202
+	iteration_statement : FOR . ROBRAOPEN expression_statement MLabel expression_statement ROBRACLOSE MLabel statement  (196)
+	iteration_statement : FOR . ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement  (197)
+
+	ROBRAOPEN  shift 278
+	.  error
+
+
+state 203
+	iteration_statement : WHILE . MLabel ROBRAOPEN expression ROBRACLOSE MLabel statement  (194)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 279
+
+
+state 204
+	jump_statement : GOTO . IDENTIFIER SEMICOLON  (198)
+
+	IDENTIFIER  shift 280
+	.  error
+
+
+state 205
+	jump_statement : CONTINUE . SEMICOLON  (199)
+
+	SEMICOLON  shift 281
+	.  error
+
+
+state 206
+	selection_statement : IF . ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel  (191)
+	selection_statement : IF . ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel statement  (192)
+
+	ROBRAOPEN  shift 282
+	.  error
+
+
+state 207
+	labeled_statement : DEFAULT . COLON statement  (182)
+
+	COLON  shift 283
+	.  error
+
+
+state 208
+	iteration_statement : DO . MLabel statement MLabel WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON  (195)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 284
+
+
+state 209
+	selection_statement : SWITCH . ROBRAOPEN expression ROBRACLOSE statement  (193)
+
+	ROBRAOPEN  shift 285
+	.  error
+
+
+state 210
+	primary_expression : IDENTIFIER .  (1)
+	labeled_statement : IDENTIFIER . COLON statement  (180)
+
+	COLON  shift 286
+	SQBRAOPEN  reduce 1
+	ROBRAOPEN  reduce 1
+	DOT  reduce 1
+	ACC  reduce 1
+	INC  reduce 1
+	DEC  reduce 1
+	AMP  reduce 1
+	MUL  reduce 1
+	ADD  reduce 1
+	SUB  reduce 1
+	DIV  reduce 1
+	MODULO  reduce 1
+	SHL  reduce 1
+	SHR  reduce 1
+	BITSHL  reduce 1
+	BITSHR  reduce 1
+	LTE  reduce 1
+	GTE  reduce 1
+	EQ  reduce 1
+	NEQ  reduce 1
+	BITXOR  reduce 1
+	BITOR  reduce 1
+	AND  reduce 1
+	OR  reduce 1
+	QUESTION  reduce 1
+	SEMICOLON  reduce 1
+	ASSIGN  reduce 1
+	STAREQ  reduce 1
+	DIVEQ  reduce 1
+	MODEQ  reduce 1
+	PLUSEQ  reduce 1
+	MINUSEQ  reduce 1
+	SHLEQ  reduce 1
+	SHREQ  reduce 1
+	BINANDEQ  reduce 1
+	BINXOREQ  reduce 1
+	BINOREQ  reduce 1
+	COMMA  reduce 1
+
+
+state 211
+	compound_statement : CURBRAOPEN CURBRACLOSE .  (184)
+
+	.  reduce 184
+
+
+state 212
+	expression_statement : SEMICOLON .  (190)
+
+	.  reduce 190
+
+
+state 213
+	expression : expression . COMMA assignment_expression  (81)
+	expression_statement : expression . SEMICOLON  (189)
+
+	SEMICOLON  shift 287
+	COMMA  shift 230
+	.  error
+
+
+state 214
+	statement : expression_statement .  (176)
+
+	.  reduce 176
+
+
+state 215
+	block_item : statement .  (188)
+
+	.  reduce 188
+
+
+state 216
+	statement : labeled_statement .  (174)
+
+	.  reduce 174
+
+
+state 217
+	statement : compound_statement .  (175)
+
+	.  reduce 175
+
+
+state 218
+	statement : selection_statement .  (177)
+
+	.  reduce 177
+
+
+state 219
+	statement : iteration_statement .  (178)
+
+	.  reduce 178
+
+
+state 220
+	statement : jump_statement .  (179)
+
+	.  reduce 179
+
+
+state 221
+	block_item_list : block_item .  (185)
+
+	.  reduce 185
+
+
+state 222
+	compound_statement : CURBRAOPEN block_item_list . CURBRACLOSE  (183)
+	block_item_list : block_item_list . MLabel block_item  (186)
+	MLabel : .  (63)
+
+	CURBRACLOSE  shift 288
+	AUTO  reduce 63
+	ENUM  reduce 63
+	RESTRICT  reduce 63
+	UNSIGNED  reduce 63
+	BREAK  reduce 63
+	EXTERN  reduce 63
+	RETURN  reduce 63
+	VOID  reduce 63
+	CASE  reduce 63
+	FLOAT  reduce 63
+	SHORT  reduce 63
+	VOLATILE  reduce 63
+	CHAR  reduce 63
+	FOR  reduce 63
+	SIGNED  reduce 63
+	WHILE  reduce 63
+	CONST  reduce 63
+	GOTO  reduce 63
+	SIZEOF  reduce 63
+	BOOL  reduce 63
+	CONTINUE  reduce 63
+	IF  reduce 63
+	STATIC  reduce 63
+	COMPLEX  reduce 63
+	DEFAULT  reduce 63
+	INLINE  reduce 63
+	IMAGINARY  reduce 63
+	DO  reduce 63
+	INT  reduce 63
+	SWITCH  reduce 63
+	DOUBLE  reduce 63
+	LONG  reduce 63
+	REGISTER  reduce 63
+	IDENTIFIER  reduce 63
+	INTEGER_CONSTANT  reduce 63
+	FLOATING_CONSTANT  reduce 63
+	CHARACTER_CONSTANT  reduce 63
+	ENUMERATION_CONSTANT  reduce 63
+	STRING_LITERAL  reduce 63
+	ROBRAOPEN  reduce 63
+	CURBRAOPEN  reduce 63
+	INC  reduce 63
+	DEC  reduce 63
+	AMP  reduce 63
+	MUL  reduce 63
+	ADD  reduce 63
+	SUB  reduce 63
+	NEG  reduce 63
+	EXCLAIM  reduce 63
+	SEMICOLON  reduce 63
+
+	MLabel  goto 289
+
+
+state 223
+	block_item : declaration .  (187)
+
+	.  reduce 187
+
+
+state 224
+	function_definition : declaration_specifiers declarator declaration_list CT compound_statement .  (207)
+
+	.  reduce 207
+
+
+state 225
+	enum_specifier : ENUM IDENTIFIER CURBRAOPEN enumerator_list COMMA CURBRACLOSE .  (120)
+
+	.  reduce 120
+
+
+state 226
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	unary_expression : SIZEOF ROBRAOPEN type_name . ROBRACLOSE  (26)
+
+	ROBRACLOSE  shift 290
+	.  error
+
+
+state 227
+	direct_declarator : direct_declarator SQBRAOPEN STATIC assignment_expression SQBRACLOSE .  (140)
+
+	.  reduce 140
+
+
+state 228
+	direct_declarator : direct_declarator SQBRAOPEN STATIC type_qualifier_list assignment_expression . SQBRACLOSE  (139)
+
+	SQBRACLOSE  shift 291
+	.  error
+
+
+state 229
+	primary_expression : ROBRAOPEN expression ROBRACLOSE .  (4)
+
+	.  reduce 4
+
+
+state 230
+	expression : expression COMMA . assignment_expression  (81)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 292
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 231
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	cast_expression : ROBRAOPEN type_name ROBRACLOSE . cast_expression  (34)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 293
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 294
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 232
+	specifier_qualifier_list : type_specifier specifier_qualifier_list .  (114)
+
+	.  reduce 114
+
+
+state 233
+	specifier_qualifier_list : type_qualifier specifier_qualifier_list .  (116)
+
+	.  reduce 116
+
+
+state 234
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name . ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+
+	ROBRACLOSE  shift 295
+	.  error
+
+
+state 235
+	multiplicative_expression : multiplicative_expression MUL cast_expression .  (36)
+
+	.  reduce 36
+
+
+state 236
+	multiplicative_expression : multiplicative_expression DIV cast_expression .  (37)
+
+	.  reduce 37
+
+
+state 237
+	multiplicative_expression : multiplicative_expression MODULO cast_expression .  (38)
+
+	.  reduce 38
+
+
+state 238
+	multiplicative_expression : multiplicative_expression . MUL cast_expression  (36)
+	multiplicative_expression : multiplicative_expression . DIV cast_expression  (37)
+	multiplicative_expression : multiplicative_expression . MODULO cast_expression  (38)
+	additive_expression : additive_expression ADD multiplicative_expression .  (40)
+
+	MUL  shift 144
+	DIV  shift 145
+	MODULO  shift 146
+	SQBRACLOSE  reduce 40
+	ROBRACLOSE  reduce 40
+	CURBRACLOSE  reduce 40
+	AMP  reduce 40
+	ADD  reduce 40
+	SUB  reduce 40
+	SHL  reduce 40
+	SHR  reduce 40
+	BITSHL  reduce 40
+	BITSHR  reduce 40
+	LTE  reduce 40
+	GTE  reduce 40
+	EQ  reduce 40
+	NEQ  reduce 40
+	BITXOR  reduce 40
+	BITOR  reduce 40
+	AND  reduce 40
+	OR  reduce 40
+	QUESTION  reduce 40
+	COLON  reduce 40
+	SEMICOLON  reduce 40
+	COMMA  reduce 40
+
+
+state 239
+	multiplicative_expression : multiplicative_expression . MUL cast_expression  (36)
+	multiplicative_expression : multiplicative_expression . DIV cast_expression  (37)
+	multiplicative_expression : multiplicative_expression . MODULO cast_expression  (38)
+	additive_expression : additive_expression SUB multiplicative_expression .  (41)
+
+	MUL  shift 144
+	DIV  shift 145
+	MODULO  shift 146
+	SQBRACLOSE  reduce 41
+	ROBRACLOSE  reduce 41
+	CURBRACLOSE  reduce 41
+	AMP  reduce 41
+	ADD  reduce 41
+	SUB  reduce 41
+	SHL  reduce 41
+	SHR  reduce 41
+	BITSHL  reduce 41
+	BITSHR  reduce 41
+	LTE  reduce 41
+	GTE  reduce 41
+	EQ  reduce 41
+	NEQ  reduce 41
+	BITXOR  reduce 41
+	BITOR  reduce 41
+	AND  reduce 41
+	OR  reduce 41
+	QUESTION  reduce 41
+	COLON  reduce 41
+	SEMICOLON  reduce 41
+	COMMA  reduce 41
+
+
+state 240
+	additive_expression : additive_expression . ADD multiplicative_expression  (40)
+	additive_expression : additive_expression . SUB multiplicative_expression  (41)
+	shift_expression : shift_expression SHL additive_expression .  (43)
+
+	ADD  shift 147
+	SUB  shift 148
+	SQBRACLOSE  reduce 43
+	ROBRACLOSE  reduce 43
+	CURBRACLOSE  reduce 43
+	AMP  reduce 43
+	SHL  reduce 43
+	SHR  reduce 43
+	BITSHL  reduce 43
+	BITSHR  reduce 43
+	LTE  reduce 43
+	GTE  reduce 43
+	EQ  reduce 43
+	NEQ  reduce 43
+	BITXOR  reduce 43
+	BITOR  reduce 43
+	AND  reduce 43
+	OR  reduce 43
+	QUESTION  reduce 43
+	COLON  reduce 43
+	SEMICOLON  reduce 43
+	COMMA  reduce 43
+
+
+state 241
+	additive_expression : additive_expression . ADD multiplicative_expression  (40)
+	additive_expression : additive_expression . SUB multiplicative_expression  (41)
+	shift_expression : shift_expression SHR additive_expression .  (44)
+
+	ADD  shift 147
+	SUB  shift 148
+	SQBRACLOSE  reduce 44
+	ROBRACLOSE  reduce 44
+	CURBRACLOSE  reduce 44
+	AMP  reduce 44
+	SHL  reduce 44
+	SHR  reduce 44
+	BITSHL  reduce 44
+	BITSHR  reduce 44
+	LTE  reduce 44
+	GTE  reduce 44
+	EQ  reduce 44
+	NEQ  reduce 44
+	BITXOR  reduce 44
+	BITOR  reduce 44
+	AND  reduce 44
+	OR  reduce 44
+	QUESTION  reduce 44
+	COLON  reduce 44
+	SEMICOLON  reduce 44
+	COMMA  reduce 44
+
+
+state 242
+	shift_expression : shift_expression . SHL additive_expression  (43)
+	shift_expression : shift_expression . SHR additive_expression  (44)
+	relational_expression : relational_expression BITSHL shift_expression .  (46)
+
+	SHL  shift 149
+	SHR  shift 150
+	SQBRACLOSE  reduce 46
+	ROBRACLOSE  reduce 46
+	CURBRACLOSE  reduce 46
+	AMP  reduce 46
+	BITSHL  reduce 46
+	BITSHR  reduce 46
+	LTE  reduce 46
+	GTE  reduce 46
+	EQ  reduce 46
+	NEQ  reduce 46
+	BITXOR  reduce 46
+	BITOR  reduce 46
+	AND  reduce 46
+	OR  reduce 46
+	QUESTION  reduce 46
+	COLON  reduce 46
+	SEMICOLON  reduce 46
+	COMMA  reduce 46
+
+
+state 243
+	shift_expression : shift_expression . SHL additive_expression  (43)
+	shift_expression : shift_expression . SHR additive_expression  (44)
+	relational_expression : relational_expression BITSHR shift_expression .  (47)
+
+	SHL  shift 149
+	SHR  shift 150
+	SQBRACLOSE  reduce 47
+	ROBRACLOSE  reduce 47
+	CURBRACLOSE  reduce 47
+	AMP  reduce 47
+	BITSHL  reduce 47
+	BITSHR  reduce 47
+	LTE  reduce 47
+	GTE  reduce 47
+	EQ  reduce 47
+	NEQ  reduce 47
+	BITXOR  reduce 47
+	BITOR  reduce 47
+	AND  reduce 47
+	OR  reduce 47
+	QUESTION  reduce 47
+	COLON  reduce 47
+	SEMICOLON  reduce 47
+	COMMA  reduce 47
+
+
+state 244
+	shift_expression : shift_expression . SHL additive_expression  (43)
+	shift_expression : shift_expression . SHR additive_expression  (44)
+	relational_expression : relational_expression LTE shift_expression .  (48)
+
+	SHL  shift 149
+	SHR  shift 150
+	SQBRACLOSE  reduce 48
+	ROBRACLOSE  reduce 48
+	CURBRACLOSE  reduce 48
+	AMP  reduce 48
+	BITSHL  reduce 48
+	BITSHR  reduce 48
+	LTE  reduce 48
+	GTE  reduce 48
+	EQ  reduce 48
+	NEQ  reduce 48
+	BITXOR  reduce 48
+	BITOR  reduce 48
+	AND  reduce 48
+	OR  reduce 48
+	QUESTION  reduce 48
+	COLON  reduce 48
+	SEMICOLON  reduce 48
+	COMMA  reduce 48
+
+
+state 245
+	shift_expression : shift_expression . SHL additive_expression  (43)
+	shift_expression : shift_expression . SHR additive_expression  (44)
+	relational_expression : relational_expression GTE shift_expression .  (49)
+
+	SHL  shift 149
+	SHR  shift 150
+	SQBRACLOSE  reduce 49
+	ROBRACLOSE  reduce 49
+	CURBRACLOSE  reduce 49
+	AMP  reduce 49
+	BITSHL  reduce 49
+	BITSHR  reduce 49
+	LTE  reduce 49
+	GTE  reduce 49
+	EQ  reduce 49
+	NEQ  reduce 49
+	BITXOR  reduce 49
+	BITOR  reduce 49
+	AND  reduce 49
+	OR  reduce 49
+	QUESTION  reduce 49
+	COLON  reduce 49
+	SEMICOLON  reduce 49
+	COMMA  reduce 49
+
+
+state 246
+	relational_expression : relational_expression . BITSHL shift_expression  (46)
+	relational_expression : relational_expression . BITSHR shift_expression  (47)
+	relational_expression : relational_expression . LTE shift_expression  (48)
+	relational_expression : relational_expression . GTE shift_expression  (49)
+	equality_expression : equality_expression EQ relational_expression .  (51)
+
+	BITSHL  shift 151
+	BITSHR  shift 152
+	LTE  shift 153
+	GTE  shift 154
+	SQBRACLOSE  reduce 51
+	ROBRACLOSE  reduce 51
+	CURBRACLOSE  reduce 51
+	AMP  reduce 51
+	EQ  reduce 51
+	NEQ  reduce 51
+	BITXOR  reduce 51
+	BITOR  reduce 51
+	AND  reduce 51
+	OR  reduce 51
+	QUESTION  reduce 51
+	COLON  reduce 51
+	SEMICOLON  reduce 51
+	COMMA  reduce 51
+
+
+state 247
+	relational_expression : relational_expression . BITSHL shift_expression  (46)
+	relational_expression : relational_expression . BITSHR shift_expression  (47)
+	relational_expression : relational_expression . LTE shift_expression  (48)
+	relational_expression : relational_expression . GTE shift_expression  (49)
+	equality_expression : equality_expression NEQ relational_expression .  (52)
+
+	BITSHL  shift 151
+	BITSHR  shift 152
+	LTE  shift 153
+	GTE  shift 154
+	SQBRACLOSE  reduce 52
+	ROBRACLOSE  reduce 52
+	CURBRACLOSE  reduce 52
+	AMP  reduce 52
+	EQ  reduce 52
+	NEQ  reduce 52
+	BITXOR  reduce 52
+	BITOR  reduce 52
+	AND  reduce 52
+	OR  reduce 52
+	QUESTION  reduce 52
+	COLON  reduce 52
+	SEMICOLON  reduce 52
+	COMMA  reduce 52
+
+
+state 248
+	equality_expression : equality_expression . EQ relational_expression  (51)
+	equality_expression : equality_expression . NEQ relational_expression  (52)
+	AND_expression : AND_expression AMP equality_expression .  (54)
+
+	EQ  shift 155
+	NEQ  shift 156
+	SQBRACLOSE  reduce 54
+	ROBRACLOSE  reduce 54
+	CURBRACLOSE  reduce 54
+	AMP  reduce 54
+	BITXOR  reduce 54
+	BITOR  reduce 54
+	AND  reduce 54
+	OR  reduce 54
+	QUESTION  reduce 54
+	COLON  reduce 54
+	SEMICOLON  reduce 54
+	COMMA  reduce 54
+
+
+state 249
+	AND_expression : AND_expression . AMP equality_expression  (54)
+	exclusive_OR_expression : exclusive_OR_expression BITXOR AND_expression .  (56)
+
+	AMP  shift 157
+	SQBRACLOSE  reduce 56
+	ROBRACLOSE  reduce 56
+	CURBRACLOSE  reduce 56
+	BITXOR  reduce 56
+	BITOR  reduce 56
+	AND  reduce 56
+	OR  reduce 56
+	QUESTION  reduce 56
+	COLON  reduce 56
+	SEMICOLON  reduce 56
+	COMMA  reduce 56
+
+
+state 250
+	exclusive_OR_expression : exclusive_OR_expression . BITXOR AND_expression  (56)
+	inclusive_OR_expression : inclusive_OR_expression BITOR exclusive_OR_expression .  (58)
+
+	BITXOR  shift 158
+	SQBRACLOSE  reduce 58
+	ROBRACLOSE  reduce 58
+	CURBRACLOSE  reduce 58
+	BITOR  reduce 58
+	AND  reduce 58
+	OR  reduce 58
+	QUESTION  reduce 58
+	COLON  reduce 58
+	SEMICOLON  reduce 58
+	COMMA  reduce 58
+
+
+state 251
+	logical_AND_expression : logical_AND_expression NLabel AND . MLabel inclusive_OR_expression  (60)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 296
+
+
+state 252
+	logical_OR_expression : logical_OR_expression NLabel OR . MLabel logical_AND_expression  (62)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 297
+
+
+state 253
+	conditional_expression : logical_OR_expression NLabel QUESTION . MLabel expression NLabel COLON MLabel conditional_expression  (66)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 298
+
+
+state 254
+	postfix_expression : postfix_expression SQBRAOPEN expression . SQBRACLOSE  (10)
+	expression : expression . COMMA assignment_expression  (81)
+
+	SQBRACLOSE  shift 299
+	COMMA  shift 230
+	.  error
+
+
+state 255
+	postfix_expression : postfix_expression ROBRAOPEN ROBRACLOSE .  (11)
+
+	.  reduce 11
+
+
+state 256
+	argument_expression_list : assignment_expression .  (19)
+
+	.  reduce 19
+
+
+state 257
+	postfix_expression : postfix_expression ROBRAOPEN argument_expression_list . ROBRACLOSE  (12)
+	argument_expression_list : argument_expression_list . COMMA assignment_expression  (20)
+
+	ROBRACLOSE  shift 300
+	COMMA  shift 301
+	.  error
+
+
+state 258
+	postfix_expression : postfix_expression DOT IDENTIFIER .  (13)
+
+	.  reduce 13
+
+
+state 259
+	postfix_expression : postfix_expression ACC IDENTIFIER .  (14)
+
+	.  reduce 14
+
+
+state 260
+	assignment_expression : unary_expression assignment_operator assignment_expression .  (68)
+
+	.  reduce 68
+
+
+state 261
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list MUL SQBRACLOSE .  (141)
+
+	.  reduce 141
+
+
+state 262
+	direct_declarator : direct_declarator SQBRAOPEN type_qualifier_list assignment_expression SQBRACLOSE .  (135)
+
+	.  reduce 135
+
+
+state 263
+	parameter_declaration : declaration_specifiers declarator .  (157)
+
+	.  reduce 157
+
+
+state 264
+	direct_declarator : direct_declarator ROBRAOPEN CT parameter_type_list ROBRACLOSE .  (143)
+
+	.  reduce 143
+
+
+state 265
+	parameter_type_list : parameter_list COMMA . DOTS  (154)
+	parameter_list : parameter_list COMMA . parameter_declaration  (156)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	EXTERN  shift 5
+	VOID  shift 6
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	SIGNED  shift 11
+	CONST  shift 12
+	BOOL  shift 13
+	STATIC  shift 14
+	COMPLEX  shift 15
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	INT  shift 18
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	DOTS  shift 302
+	.  error
+
+	declaration_specifiers  goto 186
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+	parameter_declaration  goto 303
+
+
+state 266
+	identifier_list : identifier_list COMMA IDENTIFIER .  (160)
+
+	.  reduce 160
+
+
+state 267
+	designator : SQBRAOPEN constant_expression . SQBRACLOSE  (172)
+
+	SQBRACLOSE  shift 304
+	.  error
+
+
+state 268
+	designator : DOT IDENTIFIER .  (173)
+
+	.  reduce 173
+
+
+state 269
+	initializer : CURBRAOPEN initializer_list CURBRACLOSE .  (163)
+
+	.  reduce 163
+
+
+state 270
+	initializer : CURBRAOPEN initializer_list COMMA . CURBRACLOSE  (164)
+	initializer_list : initializer_list COMMA . designation initializer  (167)
+	initializer_list : initializer_list COMMA . initializer  (168)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRAOPEN  shift 192
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	CURBRACLOSE  shift 305
+	DOT  shift 193
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 306
+	designation  goto 307
+	designator_list  goto 197
+	designator  goto 198
+
+
+state 271
+	initializer_list : designation initializer .  (165)
+
+	.  reduce 165
+
+
+state 272
+	designation : designator_list ASSIGN .  (169)
+
+	.  reduce 169
+
+
+state 273
+	designator_list : designator_list designator .  (171)
+
+	.  reduce 171
+
+
+state 274
+	jump_statement : BREAK SEMICOLON .  (200)
+
+	.  reduce 200
+
+
+state 275
+	jump_statement : RETURN SEMICOLON .  (202)
+
+	.  reduce 202
+
+
+state 276
+	expression : expression . COMMA assignment_expression  (81)
+	jump_statement : RETURN expression . SEMICOLON  (201)
+
+	SEMICOLON  shift 308
+	COMMA  shift 230
+	.  error
+
+
+state 277
+	labeled_statement : CASE constant_expression . COLON statement  (181)
+
+	COLON  shift 309
+	.  error
+
+
+state 278
+	iteration_statement : FOR ROBRAOPEN . expression_statement MLabel expression_statement ROBRACLOSE MLabel statement  (196)
+	iteration_statement : FOR ROBRAOPEN . expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement  (197)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 310
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 279
+	iteration_statement : WHILE MLabel . ROBRAOPEN expression ROBRACLOSE MLabel statement  (194)
+
+	ROBRAOPEN  shift 311
+	.  error
+
+
+state 280
+	jump_statement : GOTO IDENTIFIER . SEMICOLON  (198)
+
+	SEMICOLON  shift 312
+	.  error
+
+
+state 281
+	jump_statement : CONTINUE SEMICOLON .  (199)
+
+	.  reduce 199
+
+
+state 282
+	selection_statement : IF ROBRAOPEN . expression NLabel ROBRACLOSE MLabel statement NLabel  (191)
+	selection_statement : IF ROBRAOPEN . expression NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel statement  (192)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 313
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 283
+	labeled_statement : DEFAULT COLON . statement  (182)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 314
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 284
+	iteration_statement : DO MLabel . statement MLabel WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON  (195)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 315
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 285
+	selection_statement : SWITCH ROBRAOPEN . expression ROBRACLOSE statement  (193)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 316
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 286
+	labeled_statement : IDENTIFIER COLON . statement  (180)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 317
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 287
+	expression_statement : expression SEMICOLON .  (189)
+
+	.  reduce 189
+
+
+state 288
+	compound_statement : CURBRAOPEN block_item_list CURBRACLOSE .  (183)
+
+	.  reduce 183
+
+
+state 289
+	block_item_list : block_item_list MLabel . block_item  (186)
+
+	AUTO  shift 1
+	ENUM  shift 2
+	RESTRICT  shift 3
+	UNSIGNED  shift 4
+	BREAK  shift 199
+	EXTERN  shift 5
+	RETURN  shift 200
+	VOID  shift 6
+	CASE  shift 201
+	FLOAT  shift 7
+	SHORT  shift 8
+	VOLATILE  shift 9
+	CHAR  shift 10
+	FOR  shift 202
+	SIGNED  shift 11
+	WHILE  shift 203
+	CONST  shift 12
+	GOTO  shift 204
+	SIZEOF  shift 73
+	BOOL  shift 13
+	CONTINUE  shift 205
+	IF  shift 206
+	STATIC  shift 14
+	COMPLEX  shift 15
+	DEFAULT  shift 207
+	INLINE  shift 16
+	IMAGINARY  shift 17
+	DO  shift 208
+	INT  shift 18
+	SWITCH  shift 209
+	DOUBLE  shift 19
+	LONG  shift 20
+	REGISTER  shift 21
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 215
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+	block_item  goto 318
+	declaration  goto 223
+	declaration_specifiers  goto 60
+	storage_class_specifier  goto 25
+	type_specifier  goto 26
+	type_qualifier  goto 27
+	function_specifier  goto 28
+	enum_specifier  goto 29
+
+
+state 290
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+	unary_expression : SIZEOF ROBRAOPEN type_name ROBRACLOSE .  (26)
+
+	CURBRAOPEN  shift 293
+	SQBRACLOSE  reduce 26
+	ROBRACLOSE  reduce 26
+	CURBRACLOSE  reduce 26
+	AMP  reduce 26
+	MUL  reduce 26
+	ADD  reduce 26
+	SUB  reduce 26
+	DIV  reduce 26
+	MODULO  reduce 26
+	SHL  reduce 26
+	SHR  reduce 26
+	BITSHL  reduce 26
+	BITSHR  reduce 26
+	LTE  reduce 26
+	GTE  reduce 26
+	EQ  reduce 26
+	NEQ  reduce 26
+	BITXOR  reduce 26
+	BITOR  reduce 26
+	AND  reduce 26
+	OR  reduce 26
+	QUESTION  reduce 26
+	COLON  reduce 26
+	SEMICOLON  reduce 26
+	ASSIGN  reduce 26
+	STAREQ  reduce 26
+	DIVEQ  reduce 26
+	MODEQ  reduce 26
+	PLUSEQ  reduce 26
+	MINUSEQ  reduce 26
+	SHLEQ  reduce 26
+	SHREQ  reduce 26
+	BINANDEQ  reduce 26
+	BINXOREQ  reduce 26
+	BINOREQ  reduce 26
+	COMMA  reduce 26
+
+
+state 291
+	direct_declarator : direct_declarator SQBRAOPEN STATIC type_qualifier_list assignment_expression SQBRACLOSE .  (139)
+
+	.  reduce 139
+
+
+state 292
+	expression : expression COMMA assignment_expression .  (81)
+
+	.  reduce 81
+
+
+state 293
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN . initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN . initializer_list COMMA CURBRACLOSE  (18)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRAOPEN  shift 192
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	DOT  shift 193
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 194
+	initializer_list  goto 319
+	designation  goto 196
+	designator_list  goto 197
+	designator  goto 198
+
+
+state 294
+	cast_expression : ROBRAOPEN type_name ROBRACLOSE cast_expression .  (34)
+
+	.  reduce 34
+
+
+state 295
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE . CURBRAOPEN initializer_list COMMA CURBRACLOSE  (18)
+
+	CURBRAOPEN  shift 293
+	.  error
+
+
+state 296
+	logical_AND_expression : logical_AND_expression NLabel AND MLabel . inclusive_OR_expression  (60)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 320
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 297
+	logical_OR_expression : logical_OR_expression NLabel OR MLabel . logical_AND_expression  (62)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 321
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 298
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel . expression NLabel COLON MLabel conditional_expression  (66)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 322
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 299
+	postfix_expression : postfix_expression SQBRAOPEN expression SQBRACLOSE .  (10)
+
+	.  reduce 10
+
+
+state 300
+	postfix_expression : postfix_expression ROBRAOPEN argument_expression_list ROBRACLOSE .  (12)
+
+	.  reduce 12
+
+
+state 301
+	argument_expression_list : argument_expression_list COMMA . assignment_expression  (20)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 323
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 302
+	parameter_type_list : parameter_list COMMA DOTS .  (154)
+
+	.  reduce 154
+
+
+state 303
+	parameter_list : parameter_list COMMA parameter_declaration .  (156)
+
+	.  reduce 156
+
+
+state 304
+	designator : SQBRAOPEN constant_expression SQBRACLOSE .  (172)
+
+	.  reduce 172
+
+
+state 305
+	initializer : CURBRAOPEN initializer_list COMMA CURBRACLOSE .  (164)
+
+	.  reduce 164
+
+
+state 306
+	initializer_list : initializer_list COMMA initializer .  (168)
+
+	.  reduce 168
+
+
+state 307
+	initializer_list : initializer_list COMMA designation . initializer  (167)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 324
+
+
+state 308
+	jump_statement : RETURN expression SEMICOLON .  (201)
+
+	.  reduce 201
+
+
+state 309
+	labeled_statement : CASE constant_expression COLON . statement  (181)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 325
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 310
+	iteration_statement : FOR ROBRAOPEN expression_statement . MLabel expression_statement ROBRACLOSE MLabel statement  (196)
+	iteration_statement : FOR ROBRAOPEN expression_statement . MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement  (197)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 326
+
+
+state 311
+	iteration_statement : WHILE MLabel ROBRAOPEN . expression ROBRACLOSE MLabel statement  (194)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 327
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 312
+	jump_statement : GOTO IDENTIFIER SEMICOLON .  (198)
+
+	.  reduce 198
+
+
+state 313
+	expression : expression . COMMA assignment_expression  (81)
+	selection_statement : IF ROBRAOPEN expression . NLabel ROBRACLOSE MLabel statement NLabel  (191)
+	selection_statement : IF ROBRAOPEN expression . NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel statement  (192)
+	NLabel : .  (64)
+
+	COMMA  shift 230
+	ROBRACLOSE  reduce 64
+
+	NLabel  goto 328
+
+
+state 314
+	labeled_statement : DEFAULT COLON statement .  (182)
+
+	.  reduce 182
+
+
+state 315
+	iteration_statement : DO MLabel statement . MLabel WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON  (195)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 329
+
+
+state 316
+	expression : expression . COMMA assignment_expression  (81)
+	selection_statement : SWITCH ROBRAOPEN expression . ROBRACLOSE statement  (193)
+
+	ROBRACLOSE  shift 330
+	COMMA  shift 230
+	.  error
+
+
+state 317
+	labeled_statement : IDENTIFIER COLON statement .  (180)
+
+	.  reduce 180
+
+
+state 318
+	block_item_list : block_item_list MLabel block_item .  (186)
+
+	.  reduce 186
+
+
+state 319
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list . CURBRACLOSE  (17)
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list . COMMA CURBRACLOSE  (18)
+	initializer_list : initializer_list . COMMA designation initializer  (167)
+	initializer_list : initializer_list . COMMA initializer  (168)
+
+	CURBRACLOSE  shift 331
+	COMMA  shift 332
+	.  error
+
+
+state 320
+	inclusive_OR_expression : inclusive_OR_expression . BITOR exclusive_OR_expression  (58)
+	logical_AND_expression : logical_AND_expression NLabel AND MLabel inclusive_OR_expression .  (60)
+
+	BITOR  shift 159
+	SQBRACLOSE  reduce 60
+	ROBRACLOSE  reduce 60
+	CURBRACLOSE  reduce 60
+	AND  reduce 60
+	OR  reduce 60
+	QUESTION  reduce 60
+	COLON  reduce 60
+	SEMICOLON  reduce 60
+	COMMA  reduce 60
+
+
+state 321
+	logical_AND_expression : logical_AND_expression . NLabel AND MLabel inclusive_OR_expression  (60)
+	logical_OR_expression : logical_OR_expression NLabel OR MLabel logical_AND_expression .  (62)
+	NLabel : .  (64)
+
+	SQBRACLOSE  reduce 62
+	ROBRACLOSE  reduce 62
+	CURBRACLOSE  reduce 62
+	AND  reduce 64
+	OR  reduce 62
+	QUESTION  reduce 62
+	COLON  reduce 62
+	SEMICOLON  reduce 62
+	COMMA  reduce 62
+
+	NLabel  goto 160
+
+
+state 322
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel expression . NLabel COLON MLabel conditional_expression  (66)
+	expression : expression . COMMA assignment_expression  (81)
+	NLabel : .  (64)
+
+	COMMA  shift 230
+	COLON  reduce 64
+
+	NLabel  goto 333
+
+
+state 323
+	argument_expression_list : argument_expression_list COMMA assignment_expression .  (20)
+
+	.  reduce 20
+
+
+state 324
+	initializer_list : initializer_list COMMA designation initializer .  (167)
+
+	.  reduce 167
+
+
+state 325
+	labeled_statement : CASE constant_expression COLON statement .  (181)
+
+	.  reduce 181
+
+
+state 326
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel . expression_statement ROBRACLOSE MLabel statement  (196)
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel . expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement  (197)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 334
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 327
+	expression : expression . COMMA assignment_expression  (81)
+	iteration_statement : WHILE MLabel ROBRAOPEN expression . ROBRACLOSE MLabel statement  (194)
+
+	ROBRACLOSE  shift 335
+	COMMA  shift 230
+	.  error
+
+
+state 328
+	selection_statement : IF ROBRAOPEN expression NLabel . ROBRACLOSE MLabel statement NLabel  (191)
+	selection_statement : IF ROBRAOPEN expression NLabel . ROBRACLOSE MLabel statement NLabel ELSE MLabel statement  (192)
+
+	ROBRACLOSE  shift 336
+	.  error
+
+
+state 329
+	iteration_statement : DO MLabel statement MLabel . WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON  (195)
+
+	WHILE  shift 337
+	.  error
+
+
+state 330
+	selection_statement : SWITCH ROBRAOPEN expression ROBRACLOSE . statement  (193)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 338
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 331
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list CURBRACLOSE .  (17)
+
+	.  reduce 17
+
+
+state 332
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA . CURBRACLOSE  (18)
+	initializer_list : initializer_list COMMA . designation initializer  (167)
+	initializer_list : initializer_list COMMA . initializer  (168)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	SQBRAOPEN  shift 192
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 113
+	CURBRACLOSE  shift 339
+	DOT  shift 193
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 115
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	initializer  goto 306
+	designation  goto 307
+	designator_list  goto 197
+	designator  goto 198
+
+
+state 333
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel expression NLabel . COLON MLabel conditional_expression  (66)
+
+	COLON  shift 340
+	.  error
+
+
+state 334
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement . ROBRACLOSE MLabel statement  (196)
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement . MLabel expression NLabel ROBRACLOSE MLabel statement  (197)
+	MLabel : .  (63)
+
+	ROBRACLOSE  shift 341
+	SIZEOF  reduce 63
+	IDENTIFIER  reduce 63
+	INTEGER_CONSTANT  reduce 63
+	FLOATING_CONSTANT  reduce 63
+	CHARACTER_CONSTANT  reduce 63
+	ENUMERATION_CONSTANT  reduce 63
+	STRING_LITERAL  reduce 63
+	ROBRAOPEN  reduce 63
+	INC  reduce 63
+	DEC  reduce 63
+	AMP  reduce 63
+	MUL  reduce 63
+	ADD  reduce 63
+	SUB  reduce 63
+	NEG  reduce 63
+	EXCLAIM  reduce 63
+
+	MLabel  goto 342
+
+
+state 335
+	iteration_statement : WHILE MLabel ROBRAOPEN expression ROBRACLOSE . MLabel statement  (194)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 343
+
+
+state 336
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE . MLabel statement NLabel  (191)
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE . MLabel statement NLabel ELSE MLabel statement  (192)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 344
+
+
+state 337
+	iteration_statement : DO MLabel statement MLabel WHILE . ROBRAOPEN expression ROBRACLOSE SEMICOLON  (195)
+
+	ROBRAOPEN  shift 345
+	.  error
+
+
+state 338
+	selection_statement : SWITCH ROBRAOPEN expression ROBRACLOSE statement .  (193)
+
+	.  reduce 193
+
+
+state 339
+	postfix_expression : ROBRAOPEN type_name ROBRACLOSE CURBRAOPEN initializer_list COMMA CURBRACLOSE .  (18)
+
+	.  reduce 18
+
+
+state 340
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel expression NLabel COLON . MLabel conditional_expression  (66)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 346
+
+
+state 341
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement ROBRACLOSE . MLabel statement  (196)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 347
+
+
+state 342
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel . expression NLabel ROBRACLOSE MLabel statement  (197)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 348
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 343
+	iteration_statement : WHILE MLabel ROBRAOPEN expression ROBRACLOSE MLabel . statement  (194)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 349
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 344
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel . statement NLabel  (191)
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel . statement NLabel ELSE MLabel statement  (192)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 350
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 345
+	iteration_statement : DO MLabel statement MLabel WHILE ROBRAOPEN . expression ROBRACLOSE SEMICOLON  (195)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	expression  goto 351
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 346
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel expression NLabel COLON MLabel . conditional_expression  (66)
+
+	SIZEOF  shift 73
+	IDENTIFIER  shift 75
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	.  error
+
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 352
+	postfix_expression  goto 104
+	unary_expression  goto 126
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+
+
+state 347
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement ROBRACLOSE MLabel . statement  (196)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 353
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 348
+	expression : expression . COMMA assignment_expression  (81)
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression . NLabel ROBRACLOSE MLabel statement  (197)
+	NLabel : .  (64)
+
+	COMMA  shift 230
+	ROBRACLOSE  reduce 64
+
+	NLabel  goto 354
+
+
+state 349
+	iteration_statement : WHILE MLabel ROBRAOPEN expression ROBRACLOSE MLabel statement .  (194)
+
+	.  reduce 194
+
+
+state 350
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement . NLabel  (191)
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement . NLabel ELSE MLabel statement  (192)
+	NLabel : .  (64)
+
+	.  reduce 64
+
+	NLabel  goto 355
+
+
+state 351
+	expression : expression . COMMA assignment_expression  (81)
+	iteration_statement : DO MLabel statement MLabel WHILE ROBRAOPEN expression . ROBRACLOSE SEMICOLON  (195)
+
+	ROBRACLOSE  shift 356
+	COMMA  shift 230
+	.  error
+
+
+state 352
+	conditional_expression : logical_OR_expression NLabel QUESTION MLabel expression NLabel COLON MLabel conditional_expression .  (66)
+
+	.  reduce 66
+
+
+state 353
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement ROBRACLOSE MLabel statement .  (196)
+
+	.  reduce 196
+
+
+state 354
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel . ROBRACLOSE MLabel statement  (197)
+
+	ROBRACLOSE  shift 357
+	.  error
+
+
+state 355
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel .  (191)
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel . ELSE MLabel statement  (192)
+
+	ELSE  shift 358
+	AUTO  reduce 191
+	ENUM  reduce 191
+	RESTRICT  reduce 191
+	UNSIGNED  reduce 191
+	BREAK  reduce 191
+	EXTERN  reduce 191
+	RETURN  reduce 191
+	VOID  reduce 191
+	CASE  reduce 191
+	FLOAT  reduce 191
+	SHORT  reduce 191
+	VOLATILE  reduce 191
+	CHAR  reduce 191
+	FOR  reduce 191
+	SIGNED  reduce 191
+	WHILE  reduce 191
+	CONST  reduce 191
+	GOTO  reduce 191
+	SIZEOF  reduce 191
+	BOOL  reduce 191
+	CONTINUE  reduce 191
+	IF  reduce 191
+	STATIC  reduce 191
+	COMPLEX  reduce 191
+	DEFAULT  reduce 191
+	INLINE  reduce 191
+	IMAGINARY  reduce 191
+	DO  reduce 191
+	INT  reduce 191
+	SWITCH  reduce 191
+	DOUBLE  reduce 191
+	LONG  reduce 191
+	REGISTER  reduce 191
+	IDENTIFIER  reduce 191
+	INTEGER_CONSTANT  reduce 191
+	FLOATING_CONSTANT  reduce 191
+	CHARACTER_CONSTANT  reduce 191
+	ENUMERATION_CONSTANT  reduce 191
+	STRING_LITERAL  reduce 191
+	ROBRAOPEN  reduce 191
+	CURBRAOPEN  reduce 191
+	CURBRACLOSE  reduce 191
+	INC  reduce 191
+	DEC  reduce 191
+	AMP  reduce 191
+	MUL  reduce 191
+	ADD  reduce 191
+	SUB  reduce 191
+	NEG  reduce 191
+	EXCLAIM  reduce 191
+	SEMICOLON  reduce 191
+
+
+state 356
+	iteration_statement : DO MLabel statement MLabel WHILE ROBRAOPEN expression ROBRACLOSE . SEMICOLON  (195)
+
+	SEMICOLON  shift 359
+	.  error
+
+
+state 357
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE . MLabel statement  (197)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 360
+
+
+state 358
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel ELSE . MLabel statement  (192)
+	MLabel : .  (63)
+
+	.  reduce 63
+
+	MLabel  goto 361
+
+
+state 359
+	iteration_statement : DO MLabel statement MLabel WHILE ROBRAOPEN expression ROBRACLOSE SEMICOLON .  (195)
+
+	.  reduce 195
+
+
+state 360
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel . statement  (197)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 362
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 361
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel . statement  (192)
+
+	BREAK  shift 199
+	RETURN  shift 200
+	CASE  shift 201
+	FOR  shift 202
+	WHILE  shift 203
+	GOTO  shift 204
+	SIZEOF  shift 73
+	CONTINUE  shift 205
+	IF  shift 206
+	DEFAULT  shift 207
+	DO  shift 208
+	SWITCH  shift 209
+	IDENTIFIER  shift 210
+	INTEGER_CONSTANT  shift 76
+	FLOATING_CONSTANT  shift 77
+	CHARACTER_CONSTANT  shift 78
+	ENUMERATION_CONSTANT  shift 79
+	STRING_LITERAL  shift 80
+	ROBRAOPEN  shift 82
+	CURBRAOPEN  shift 118
+	INC  shift 83
+	DEC  shift 84
+	AMP  shift 85
+	MUL  shift 114
+	ADD  shift 87
+	SUB  shift 88
+	NEG  shift 89
+	EXCLAIM  shift 90
+	SEMICOLON  shift 212
+	.  error
+
+	expression  goto 213
+	primary_expression  goto 91
+	multiplicative_expression  goto 92
+	additive_expression  goto 93
+	shift_expression  goto 94
+	relational_expression  goto 95
+	equality_expression  goto 96
+	AND_expression  goto 97
+	exclusive_OR_expression  goto 98
+	inclusive_OR_expression  goto 99
+	logical_AND_expression  goto 100
+	logical_OR_expression  goto 101
+	conditional_expression  goto 102
+	assignment_expression  goto 135
+	expression_statement  goto 214
+	postfix_expression  goto 104
+	unary_expression  goto 105
+	cast_expression  goto 106
+	unary_operator  goto 107
+	constant  goto 108
+	statement  goto 363
+	labeled_statement  goto 216
+	compound_statement  goto 217
+	selection_statement  goto 218
+	iteration_statement  goto 219
+	jump_statement  goto 220
+
+
+state 362
+	iteration_statement : FOR ROBRAOPEN expression_statement MLabel expression_statement MLabel expression NLabel ROBRACLOSE MLabel statement .  (197)
+
+	.  reduce 197
+
+
+state 363
+	selection_statement : IF ROBRAOPEN expression NLabel ROBRACLOSE MLabel statement NLabel ELSE MLabel statement .  (192)
+
+	.  reduce 192
+
+
+93 terminals, 65 nonterminals
+211 grammar rules, 364 states

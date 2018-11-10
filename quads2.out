@@ -1,0 +1,167 @@
+========================================================================================================================
+Symbol Table: Global                                                             Parent: null
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+printStr            int                                        function       4            0            ptr-to-ST(printStr)
+printInt            int                                        function       4            4            ptr-to-ST(printInt)
+readInt             int                                        function       4            8            ptr-to-ST(readInt)
+diff                int                                        function       4            12           ptr-to-ST(diff)
+main                int                                        function       4            16           ptr-to-ST(main)
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: printStr                                                           Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+c                   ptr(char)                                  param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: printInt                                                           Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+i                   int                                        param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: readInt                                                            Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+eP                  ptr(int)                                   param          4            0            null
+return              int                                        local          4            4            null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: diff                                                               Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+a                   int                                        param          4            0            null
+b                   int                                        param          4            4            null
+return              int                                        local          4            8            null
+ans                 int                                        local          4            12           null
+printStr            int                                        local          4            16           null
+t00                 ptr(char)                 "got into function \n"temp           4            20           null
+t01                 int                                        temp           4            24           null
+t02                 int                                        temp           4            28           null
+t03                 int                                        temp           4            32           null
+t04                 int                                        temp           4            36           null
+t05                 ptr(char)                 "ans in diff fn: \n"temp           4            40           null
+t06                 int                                        temp           4            44           null
+printInt            int                                        local          4            48           null
+t07                 int                                        temp           4            52           null
+t08                 ptr(char)                 "returning from function \n"temp           4            56           null
+t09                 int                                        temp           4            60           null
+========================================================================================================================
+
+========================================================================================================================
+Symbol Table: main                                                               Parent: Global
+----------------------------------------------------------------------------------------------------
+Name                Type                      Category       Initial Value        Size         Offset       Nested Table
+========================================================================================================================
+return              int                                        local          4            0            null
+x                   int                                        local          4            4            null
+y                   int                                        local          4            8            null
+z                   int                                        local          4            12           null
+eP1                 int                                        local          4            16           null
+eP2                 int                                        local          4            20           null
+printStr            int                                        local          4            24           null
+t00                 ptr(char)                 "Enter two numbers : \n"temp           4            28           null
+t01                 int                                        temp           4            32           null
+readInt             int                                        local          4            36           null
+t02                 ptr(int)                                   temp           4            40           null
+t03                 int                                        temp           4            44           null
+t04                 int                                        temp           4            48           null
+t05                 int                                        temp           4            52           null
+t06                 ptr(int)                                   temp           4            56           null
+t07                 int                                        temp           4            60           null
+t08                 int                                        temp           4            64           null
+t09                 int                                        temp           4            68           null
+t10                 ptr(char)                 "x :"            temp           4            72           null
+t11                 int                                        temp           4            76           null
+printInt            int                                        local          4            80           null
+t12                 int                                        temp           4            84           null
+t13                 ptr(char)                 "\n y:"          temp           4            88           null
+t14                 int                                        temp           4            92           null
+t15                 int                                        temp           4            96           null
+t16                 ptr(char)                 "\n"             temp           4            100          null
+t17                 int                                        temp           4            104          null
+diff                int                                        local          4            108          null
+t18                 int                                        temp           4            112          null
+t19                 int                                        temp           4            116          null
+t20                 int                                        temp           4            120          null
+t21                 ptr(char)                 "difference of the two number is equal to\n "temp           4            124          null
+t22                 int                                        temp           4            128          null
+t23                 int                                        temp           4            132          null
+t24                 ptr(char)                 "\n"             temp           4            136          null
+t25                 int                                        temp           4            140          null
+c                   int                                        local          4            144          null
+========================================================================================================================
+
+===================================
+Quad Translation:
+-----------------------------------
+
+diff: 
+
+	1   :	t00 = "got into function \n"
+	2   :	param t00
+	3   :	t01 = call printStr, 1
+	4   :	t02 = a - b
+	5   :	ans = t02
+	6   :	t05 = "ans in diff fn: \n"
+	7   :	param t05
+	8   :	t06 = call printStr, 1
+	9   :	param ans
+	10  :	t07 = call printInt, 1
+	11  :	t08 = "returning from function \n"
+	12  :	param t08
+	13  :	t09 = call printStr, 1
+	14  :	ret ans
+
+main: 
+
+	17  :	t00 = "Enter two numbers : \n"
+	18  :	param t00
+	19  :	t01 = call printStr, 1
+	20  :	t02 = &eP1
+	21  :	param t02
+	22  :	t03 = call readInt, 1
+	23  :	x = t03
+	24  :	t06 = &eP2
+	25  :	param t06
+	26  :	t07 = call readInt, 1
+	27  :	y = t07
+	28  :	t10 = "x :"
+	29  :	param t10
+	30  :	t11 = call printStr, 1
+	31  :	param x
+	32  :	t12 = call printInt, 1
+	33  :	t13 = "\n y:"
+	34  :	param t13
+	35  :	t14 = call printStr, 1
+	36  :	param y
+	37  :	t15 = call printInt, 1
+	38  :	t16 = "\n"
+	39  :	param t16
+	40  :	t17 = call printStr, 1
+	41  :	param x
+	42  :	param y
+	43  :	t18 = call diff, 2
+	44  :	z = t18
+	45  :	t21 = "difference of the two number is equal to\n "
+	46  :	param t21
+	47  :	t22 = call printStr, 1
+	48  :	param z
+	49  :	t23 = call printInt, 1
+	50  :	t24 = "\n"
+	51  :	param t24
+	52  :	t25 = call printStr, 1
+	53  :	ret c
+-----------------------------------
